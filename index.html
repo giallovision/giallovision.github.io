@@ -31,6 +31,18 @@
         .mt-4 {
             margin-top: 50px; /* Adjust spacing between form and footer */
         }
+		/* Media query for smaller screens */
+        @media (max-width: 768px) {
+            /* Adjust the width of the iframe containing the YouTube video */
+            #myCarousel iframe {
+                max-width: 100%;
+            }
+
+            /* Adjust the width of the iframe containing the Google Form */
+            iframe[src*="docs.google.com/forms"] {
+                max-width: 100%;
+            }
+        }
     </style>
 </head>
 <body>

@@ -16,3 +16,5 @@ desktop.ini
 *_backup/
 *~
 .crswap
+
+./codebase_dump.txt

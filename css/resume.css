@@ -228,3 +228,113 @@ p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35
     border-radius: 4px; cursor: pointer; transition: all 0.3s;
 }
 .transmit-btn:hover { background: var(--accent-teal); color: #000; box-shadow: 0 0 20px rgba(0, 180, 216, 0.4); }
+
+/* ========================================================
+   PRODUCTION-GRADE MOBILE OVERRIDES (SCREENS < 768px)
+   ======================================================== */
+@media (max-width: 768px) {
+    /* Prevent overall viewport breaking */
+    body {
+        overflow-x: hidden !important;
+    }
+
+    /* 1. COLLAPSE FIXED HEADER STACK */
+    .top-nav {
+        height: 110px !important; /* Holds layered items neatly */
+        flex-direction: column !important;
+        justify-content: center !important;
+        padding: 10px !important;
+        gap: 8px !important;
+    }
+    
+    .top-nav div[style*="display: flex"] {
+        width: 100% !important;
+        justify-content: space-between !important;
+        gap: 10px !important;
+    }
+
+    .back-btn {
+        flex: 1 !important;
+        text-align: center !important;
+        padding: 8px 10px !important;
+        font-size: 0.72rem !important;
+    }
+
+    /* 2. ADJUST MASTER UI WORKSPACE LAYER */
+    .fixed-ui {
+        top: 110px !important; /* Sits safely beneath header */
+        height: calc(100vh - 110px) !important;
+        flex-direction: column-reverse !important; /* Media on top, Text on bottom */
+    }
+
+    /* 3. ARRANGE MEDIA COLUMN (TOP HALF) */
+    .media-column {
+        width: 100% !important;
+        height: 42% !important; /* Holds top viewport allocation slice */
+        padding: 0 !important;
+    }
+
+    .media-stack {
+        width: 100% !important;
+        height: 100% !important;
+        max-width: 100% !important;
+        border-radius: 0 !important;
+        border-left: none !important;
+        border-right: none !important;
+        padding: 10px !important; /* Tight padding box for asset scaling */
+        aspect-ratio: auto !important; /* Overrides fixed desktop ratio constraints */
+    }
+
+    /* FIX: Clear legacy 1024px constraints to center and scale video feeds */
+    .media-stack .bg-media {
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate3d(-50%, -50%, 0) !important; /* Re-forces absolute canvas centering */
+        width: 100% !important;
+        height: 100% !important;
+        max-width: calc(100% - 20px) !important;
+        max-height: calc(100% - 20px) !important;
+        object-fit: contain !important; /* Maintains clean aspect ratios without cropping */
+        -webkit-mask-image: none !important; /* Clears alpha feather masking for narrow displays */
+        mask-image: none !important;
+    }
+
+    /* 4. ARRANGE TEXT COLUMN (BOTTOM HALF) */
+    .text-column {
+        width: 100% !important;
+        height: 58% !important; /* Holds bottom tracking allocation slice */
+        padding: 0 !important;
+    }
+
+    /* Keep absolute centering tracking safe so text cards remain inside viewports */
+    .step {
+        width: 92% !important;
+        max-width: 100% !important;
+        padding: 25px 20px !important;
+        border-radius: 8px !important;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7) !important;
+    }
+
+    /* 5. TYPOGRAPHY AND SCALING CORRECTIONS */
+    h1 { font-size: 1.8rem !important; line-height: 1.2 !important; margin-bottom: 5px !important; }
+    h2 { font-size: 1.05rem !important; margin-bottom: 12px !important; }
+    p { font-size: 0.9rem !important; line-height: 1.5 !important; margin-bottom: 18px !important; }
+    
+    .tech-stack {
+        font-size: 0.72rem !important;
+        padding: 8px 12px !important;
+        letter-spacing: 1px !important;
+    }
+
+    /* Contact form formatting for narrow displays */
+    .modal-content {
+        width: 95% !important;
+        padding: 24px !important;
+        box-sizing: border-box !important;
+    }
+    
+    .input-row {
+        flex-direction: column !important;
+        gap: 0 !important;
+    }
+}

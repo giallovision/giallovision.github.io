@@ -130,22 +130,31 @@ function autoCenterCamera() {
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
     
+    // Check if the viewport is mobile width
+    const isMobile = screenWidth < 768;
+
     // The total physical footprint of the spaced-out node layout
-    const estimatedGraphWidth = 1670; 
-    const estimatedGraphHeight = 850;
+    // Adjust framing boxes dynamically based on the hardware aspect ratio
+    const estimatedGraphWidth = isMobile ? 1100 : 1670; 
+    const estimatedGraphHeight = isMobile ? 1200 : 850;
 
     // Calculate scale factor required to fit both width and height
     const scaleX = screenWidth / estimatedGraphWidth;
     const scaleY = screenHeight / estimatedGraphHeight;
     
-    // Pick the most restrictive scale so nothing is cut off, but cap it at 100% zoom
+    // Pick the most restrictive scale, but let mobile breathe slightly more
     let finalScale = Math.min(scaleX, scaleY);
     finalScale = Math.min(finalScale, 1.0);
+    
+    // Enforce a minimum readability zoom floor specifically for phone displays
+    if (isMobile) {
+        finalScale = Math.max(finalScale, 0.45);
+    }
     
     canvas.ds.scale = finalScale;
 
     // Center the layout horizontally
-    let xOffset = Math.max(20, (screenWidth - (estimatedGraphWidth * finalScale)) / 2);
+    let xOffset = isMobile ? -50 : Math.max(20, (screenWidth - (estimatedGraphWidth * finalScale)) / 2);
     
     // Calculate vertical centering
     let yOffset = Math.max(20, (screenHeight - (estimatedGraphHeight * finalScale)) / 2);

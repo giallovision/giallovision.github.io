@@ -130,41 +130,39 @@ function autoCenterCamera() {
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
     
-    // Check if the viewport is mobile width
+    // Check if the current environment is running on a narrow mobile frame
     const isMobile = screenWidth < 768;
 
-    // The total physical footprint of the spaced-out node layout
-    // Adjust framing boxes dynamically based on the hardware aspect ratio
-    const estimatedGraphWidth = isMobile ? 1100 : 1670; 
-    const estimatedGraphHeight = isMobile ? 1200 : 850;
-
-    // Calculate scale factor required to fit both width and height
-    const scaleX = screenWidth / estimatedGraphWidth;
-    const scaleY = screenHeight / estimatedGraphHeight;
-    
-    // Pick the most restrictive scale, but let mobile breathe slightly more
-    let finalScale = Math.min(scaleX, scaleY);
-    finalScale = Math.min(finalScale, 1.0);
-    
-    // Enforce a minimum readability zoom floor specifically for phone displays
     if (isMobile) {
-        finalScale = Math.max(finalScale, 0.45);
+        // MOBILE OVERRIDE STRATEGY:
+        // Do not force the wide 1670px canvas grid to squeeze into a tiny row.
+        // Lock the camera zoom to a highly readable scale, and pan directly
+        // over the core Console and Portfolio nodes. The user can swipe around natively.
+        canvas.ds.scale = 0.68; // Locks a clear, human-readable baseline zoom factor
+        canvas.ds.offset = [20, 40]; // Centers tracking on the primary interactive tier
+    } else {
+        // STANDARD DESKTOP LOGIC (Maintains original layout configuration)
+        const estimatedGraphWidth = 1670; 
+        const estimatedGraphHeight = 850;
+
+        const scaleX = screenWidth / estimatedGraphWidth;
+        const scaleY = screenHeight / estimatedGraphHeight;
+        
+        let finalScale = Math.min(scaleX, scaleY);
+        finalScale = Math.min(finalScale, 1.0);
+        
+        canvas.ds.scale = finalScale;
+
+        let xOffset = Math.max(20, (screenWidth - (estimatedGraphWidth * finalScale)) / 2);
+        let yOffset = Math.max(20, (screenHeight - (estimatedGraphHeight * finalScale)) / 2);
+        
+        if (screenWidth >= 1024) {
+            yOffset = Math.min(yOffset, 80);
+        }
+
+        canvas.ds.offset = [xOffset, yOffset];
     }
     
-    canvas.ds.scale = finalScale;
-
-    // Center the layout horizontally
-    let xOffset = isMobile ? -50 : Math.max(20, (screenWidth - (estimatedGraphWidth * finalScale)) / 2);
-    
-    // Calculate vertical centering
-    let yOffset = Math.max(20, (screenHeight - (estimatedGraphHeight * finalScale)) / 2);
-    
-    // On large desktop monitors, lock the layout near the top instead of dead center
-    if (screenWidth >= 1024) {
-        yOffset = Math.min(yOffset, 80);
-    }
-
-    canvas.ds.offset = [xOffset, yOffset];
     canvas.setDirty(true, true);
 }
 

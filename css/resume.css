@@ -233,14 +233,14 @@ p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35
    PRODUCTION-GRADE MOBILE OVERRIDES (SCREENS < 768px)
    ======================================================== */
 @media (max-width: 768px) {
-    /* Prevent overall viewport breaking */
+    /* Normalize overall body bounds for native touch layouts */
     body {
         overflow-x: hidden !important;
     }
 
-    /* 1. COLLAPSE FIXED HEADER STACK */
+    /* 1. LAYER COMPACT NAVBAR ITEMS */
     .top-nav {
-        height: 110px !important; /* Holds layered items neatly */
+        height: 110px !important; /* Holds layered buttons cleanly */
         flex-direction: column !important;
         justify-content: center !important;
         padding: 10px !important;
@@ -260,18 +260,19 @@ p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35
         font-size: 0.72rem !important;
     }
 
-    /* 2. ADJUST MASTER UI WORKSPACE LAYER */
+    /* 2. RE-ARRANGE WORKSPACE CONTENT FRAMES */
     .fixed-ui {
-        top: 110px !important; /* Sits safely beneath header */
+        top: 110px !important; /* Positions content below the mobile header */
         height: calc(100vh - 110px) !important;
-        flex-direction: column-reverse !important; /* Media on top, Text on bottom */
+        flex-direction: column-reverse !important; /* Media elements on top, text on bottom */
     }
 
-    /* 3. ARRANGE MEDIA COLUMN (TOP HALF) */
+    /* 3. CENTER & BALANCE MEDIA SECTION (TOP HALF) */
     .media-column {
         width: 100% !important;
         height: 42% !important; /* Holds top viewport allocation slice */
         padding: 0 !important;
+        border-bottom: 1px solid var(--border-soft) !important;
     }
 
     .media-stack {
@@ -279,34 +280,34 @@ p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35
         height: 100% !important;
         max-width: 100% !important;
         border-radius: 0 !important;
-        border-left: none !important;
-        border-right: none !important;
-        padding: 10px !important; /* Tight padding box for asset scaling */
-        aspect-ratio: auto !important; /* Overrides fixed desktop ratio constraints */
+        border: none !important;
+        padding: 10px !important; 
+        aspect-ratio: auto !important; /* Clears fixed desktop ratio constraints */
     }
 
-    /* FIX: Clear legacy 1024px constraints to center and scale video feeds */
+    /* CRITICAL BUGFIX: Overrides legacy 1024px positional constraints */
     .media-stack .bg-media {
-        top: 50% !important;
+        top: 50% !important; /* Resets positioning coordinates */
         left: 50% !important;
-        transform: translate3d(-50%, -50%, 0) !important; /* Re-forces absolute canvas centering */
-        width: 100% !important;
-        height: 100% !important;
+        position: absolute !important;
+        transform: translate3d(-50%, -50%, 0) !important; /* Forces layout centering */
+        width: auto !important;
+        height: auto !important;
         max-width: calc(100% - 20px) !important;
         max-height: calc(100% - 20px) !important;
-        object-fit: contain !important; /* Maintains clean aspect ratios without cropping */
-        -webkit-mask-image: none !important; /* Clears alpha feather masking for narrow displays */
+        object-fit: contain !important; /* Prevents visual clipping */
+        -webkit-mask-image: none !important; /* Disables alpha feather mask on small screens */
         mask-image: none !important;
     }
 
-    /* 4. ARRANGE TEXT COLUMN (BOTTOM HALF) */
+    /* 4. ARRANGE TEXT CARDS SECTION (BOTTOM HALF) */
     .text-column {
         width: 100% !important;
         height: 58% !important; /* Holds bottom tracking allocation slice */
         padding: 0 !important;
     }
 
-    /* Keep absolute centering tracking safe so text cards remain inside viewports */
+    /* Maintains structural tracking so cards remain aligned */
     .step {
         width: 92% !important;
         max-width: 100% !important;
@@ -315,7 +316,7 @@ p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35
         box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7) !important;
     }
 
-    /* 5. TYPOGRAPHY AND SCALING CORRECTIONS */
+    /* 5. FONTS & SCALING CORRECTIONS */
     h1 { font-size: 1.8rem !important; line-height: 1.2 !important; margin-bottom: 5px !important; }
     h2 { font-size: 1.05rem !important; margin-bottom: 12px !important; }
     p { font-size: 0.9rem !important; line-height: 1.5 !important; margin-bottom: 18px !important; }
@@ -326,7 +327,6 @@ p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35
         letter-spacing: 1px !important;
     }
 
-    /* Contact form formatting for narrow displays */
     .modal-content {
         width: 95% !important;
         padding: 24px !important;

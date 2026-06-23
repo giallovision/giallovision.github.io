@@ -23,6 +23,15 @@
             display: block;
         }
 
+        /* ========================================================
+           MOBILE CANVAS GESTURE UNLOCK (SCREENS < 768px)
+           ======================================================== */
+        @media (max-width: 768px) {
+            #mycanvas {
+                touch-action: none !important; /* Prevents mobile browser from hijacking swipes */
+            }
+        }
+
         /* ==========================================
            CONTACT MODAL OVERLAY (STEALTH BRIDGE)
            ========================================== */

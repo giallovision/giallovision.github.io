@@ -188,21 +188,24 @@ if (isMobileDevice) {
 
     canvasEl.addEventListener('touchstart', (e) => {
         if (e.touches.length === 1) {
-            // Track starting positions for single-finger panning
+            // Log starting coordinates for fluid panning
             lastTouchX = e.touches[0].clientX;
             lastTouchY = e.touches[0].clientY;
         } else if (e.touches.length === 2) {
-            // Calculate initial multi-finger distance for pinch-to-zoom
+            // Track starting vector distance for smooth pinch-to-zoom
             lastTouchDist = Math.hypot(
                 e.touches[0].clientX - e.touches[1].clientX,
                 e.touches[0].clientY - e.touches[1].clientY
             );
         }
-    }, { passive: true });
+    }, { passive: false });
 
     canvasEl.addEventListener('touchmove', (e) => {
+        // CRITICAL: Stops mobile Chrome from triggering a background window bounce/scroll
+        e.preventDefault(); 
+        
         if (e.touches.length === 1) {
-            // Direct matrix offset injection for fluid panning
+            // Inject coordinate deltas straight into the LiteGraph camera matrix
             const deltaX = e.touches[0].clientX - lastTouchX;
             const deltaY = e.touches[0].clientY - lastTouchY;
             
@@ -211,9 +214,9 @@ if (isMobileDevice) {
             
             lastTouchX = e.touches[0].clientX;
             lastTouchY = e.touches[0].clientY;
-            canvas.setDirty(true, true); // Force immediate redraw
+            canvas.setDirty(true, true); // Direct repaint command
         } else if (e.touches.length === 2) {
-            // Direct matrix scaling injection for pinch-to-zoom
+            // Scale interpolation loop for pinch gestures
             const currentDist = Math.hypot(
                 e.touches[0].clientX - e.touches[1].clientX,
                 e.touches[0].clientY - e.touches[1].clientY
@@ -221,11 +224,11 @@ if (isMobileDevice) {
             
             if (lastTouchDist > 0) {
                 const factor = currentDist / lastTouchDist;
-                // Keep the canvas scaling bounded between 0.35x and 1.5x zoom
+                // Binds camera scaling strictly between 0.35x and 1.5x zoom floors
                 canvas.ds.scale = Math.min(Math.max(canvas.ds.scale * factor, 0.35), 1.5);
                 canvas.setDirty(true, true);
             }
             lastTouchDist = currentDist;
         }
-    }, { passive: true });
+    }, { passive: false });
 }

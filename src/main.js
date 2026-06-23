@@ -132,13 +132,12 @@ function autoCenterCamera() {
     const isMobile = screenWidth < 768;
 
     if (isMobile) {
-        // MOBILE OVERRIDE STRATEGY:
-        // Set a clear, readable zoom floor and offset coordinates
-        canvas.ds.scale = 0.65; 
-        canvas.ds.offset = [15, 35]; 
+        // Sets a clear, readable zoom floor and offset coordinates for vertical displays
+        canvas.ds.scale = 0.55; 
+        canvas.ds.offset = [15, 30]; 
     } else {
         // STANDARD DESKTOP LOGIC
-        const estimatedGraphWidth = 1670; 
+        const estimatedGraphWidth = 1670;
         const estimatedGraphHeight = 850;
 
         const scaleX = screenWidth / estimatedGraphWidth;
@@ -161,55 +160,73 @@ function autoCenterCamera() {
     canvas.setDirty(true, true);
 }
 
-// HIGH-PERFORMANCE HIGH-DPI CANVAS MATRIX RESIZER
+// CLEAN GRAPHICS WINDOW INITIALIZER
 function updateCanvasResolution() {
-    // Read the hardware pixel density factor (Pixel 8 Pro operates near ~3.5x)
-    const dpr = window.devicePixelRatio || 1;
-    
-    // Scale the internal canvas buffer up to match native screen resolution
-    canvasEl.width = window.innerWidth * dpr;
-    canvasEl.height = window.innerHeight * dpr;
-    
-    // Scale the LiteGraph rendering layer context back to standard layout dimensions
+    canvasEl.width = window.innerWidth;
+    canvasEl.height = window.innerHeight;
     canvas.resize();
     autoCenterCamera();
 }
 
 window.addEventListener("resize", updateCanvasResolution);
-updateCanvasResolution(); // Initializes resolution baseline on layout boot
+updateCanvasResolution(); // Initializes operational boundaries on boot
 graph.start();
 
 // ========================================================
-// UNIVERSAL MOBILE MOUSE EVENT SIMULATOR FOR FLUID TOUCH
+// DIRECT-INJECTION MOBILE TOUCH DRAG ENGINE
 // ========================================================
 if (window.innerWidth < 768) {
-    function redirectTouchEvent(type, touch) {
-        const mouseEvent = new MouseEvent(type, {
-            clientX: touch.clientX,
-            clientY: touch.clientY,
-            bubbles: true,
-            cancelable: true,
-            button: 0,
-            buttons: 1
-        });
-        touch.target.dispatchEvent(mouseEvent);
-    }
+    let lastTouchX = 0;
+    let lastTouchY = 0;
 
     canvasEl.addEventListener('touchstart', (e) => {
         if (e.touches.length === 1) {
-            redirectTouchEvent('mousedown', e.touches[0]);
+            lastTouchX = e.touches[0].clientX;
+            lastTouchY = e.touches[0].clientY;
+            
+            // Forwards a mousedown initialization to handle node actions/clicks cleanly
+            const touch = e.touches[0];
+            const mousedownEvent = new MouseEvent('mousedown', {
+                clientX: touch.clientX,
+                clientY: touch.clientY,
+                bubbles: true,
+                cancelable: true,
+                button: 0,
+                buttons: 1
+            });
+            canvasEl.dispatchEvent(mousedownEvent);
         }
     }, { passive: false });
 
     canvasEl.addEventListener('touchmove', (e) => {
-        // Blocks mobile Chrome from pulling down or scrolling the viewport out of line
-        e.preventDefault(); 
+        e.preventDefault(); // Locks mobile overscroll window bouncing completely
+        
         if (e.touches.length === 1) {
-            redirectTouchEvent('mousemove', e.touches[0]);
+            const currentX = e.touches[0].clientX;
+            const currentY = e.touches[0].clientY;
+            
+            // Extract displacement deltas from touch movements
+            const deltaX = currentX - lastTouchX;
+            const deltaY = currentY - lastTouchY;
+            
+            // Map offsets directly into LiteGraph's matrix transform registers
+            canvas.ds.offset[0] += deltaX;
+            canvas.ds.offset[1] += deltaY;
+            
+            lastTouchX = currentX;
+            lastTouchY = currentY;
+            
+            canvas.setDirty(true, true); // Force immediate canvas repaint loop
         }
     }, { passive: false });
 
     canvasEl.addEventListener('touchend', (e) => {
-        redirectTouchEvent('mouseup', e.changedTouches[0]);
+        const mouseupEvent = new MouseEvent('mouseup', {
+            bubbles: true,
+            cancelable: true,
+            button: 0,
+            buttons: 0
+        });
+        canvasEl.dispatchEvent(mouseupEvent);
     }, { passive: false });
 }

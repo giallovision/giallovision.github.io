@@ -129,19 +129,15 @@ window.addEventListener('giallo_oom_error', () => {
 function autoCenterCamera() {
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
-    
-    // Check if the current environment is running on a narrow mobile frame
     const isMobile = screenWidth < 768;
 
     if (isMobile) {
         // MOBILE OVERRIDE STRATEGY:
-        // Do not force the wide 1670px canvas grid to squeeze into a tiny row.
-        // Lock the camera zoom to a highly readable scale, and pan directly
-        // over the core Console and Portfolio nodes. The user can swipe around natively.
-        canvas.ds.scale = 0.68; // Locks a clear, human-readable baseline zoom factor
-        canvas.ds.offset = [20, 40]; // Centers tracking on the primary interactive tier
+        // Set a clear, readable zoom floor and offset coordinates
+        canvas.ds.scale = 0.65; 
+        canvas.ds.offset = [15, 35]; 
     } else {
-        // STANDARD DESKTOP LOGIC (Maintains original layout configuration)
+        // STANDARD DESKTOP LOGIC
         const estimatedGraphWidth = 1670; 
         const estimatedGraphHeight = 850;
 
@@ -162,73 +158,58 @@ function autoCenterCamera() {
 
         canvas.ds.offset = [xOffset, yOffset];
     }
-    
     canvas.setDirty(true, true);
 }
 
-// Ensure resize events update the literal canvas pixels, not just the CSS
-window.addEventListener("resize", () => {
-    canvasEl.width = window.innerWidth;
-    canvasEl.height = window.innerHeight;
+// HIGH-PERFORMANCE HIGH-DPI CANVAS MATRIX RESIZER
+function updateCanvasResolution() {
+    // Read the hardware pixel density factor (Pixel 8 Pro operates near ~3.5x)
+    const dpr = window.devicePixelRatio || 1;
+    
+    // Scale the internal canvas buffer up to match native screen resolution
+    canvasEl.width = window.innerWidth * dpr;
+    canvasEl.height = window.innerHeight * dpr;
+    
+    // Scale the LiteGraph rendering layer context back to standard layout dimensions
     canvas.resize();
     autoCenterCamera();
-});
+}
 
-autoCenterCamera();
+window.addEventListener("resize", updateCanvasResolution);
+updateCanvasResolution(); // Initializes resolution baseline on layout boot
 graph.start();
 
 // ========================================================
-// HARDWARE-LEVEL MOBILE MULTI-TOUCH OPTIMIZER
+// UNIVERSAL MOBILE MOUSE EVENT SIMULATOR FOR FLUID TOUCH
 // ========================================================
-const isMobileDevice = window.innerWidth < 768;
-if (isMobileDevice) {
-    let lastTouchX = 0;
-    let lastTouchY = 0;
-    let lastTouchDist = 0;
+if (window.innerWidth < 768) {
+    function redirectTouchEvent(type, touch) {
+        const mouseEvent = new MouseEvent(type, {
+            clientX: touch.clientX,
+            clientY: touch.clientY,
+            bubbles: true,
+            cancelable: true,
+            button: 0,
+            buttons: 1
+        });
+        touch.target.dispatchEvent(mouseEvent);
+    }
 
     canvasEl.addEventListener('touchstart', (e) => {
         if (e.touches.length === 1) {
-            // Log starting coordinates for fluid panning
-            lastTouchX = e.touches[0].clientX;
-            lastTouchY = e.touches[0].clientY;
-        } else if (e.touches.length === 2) {
-            // Track starting vector distance for smooth pinch-to-zoom
-            lastTouchDist = Math.hypot(
-                e.touches[0].clientX - e.touches[1].clientX,
-                e.touches[0].clientY - e.touches[1].clientY
-            );
+            redirectTouchEvent('mousedown', e.touches[0]);
         }
     }, { passive: false });
 
     canvasEl.addEventListener('touchmove', (e) => {
-        // CRITICAL: Stops mobile Chrome from triggering a background window bounce/scroll
+        // Blocks mobile Chrome from pulling down or scrolling the viewport out of line
         e.preventDefault(); 
-        
         if (e.touches.length === 1) {
-            // Inject coordinate deltas straight into the LiteGraph camera matrix
-            const deltaX = e.touches[0].clientX - lastTouchX;
-            const deltaY = e.touches[0].clientY - lastTouchY;
-            
-            canvas.ds.offset[0] += deltaX;
-            canvas.ds.offset[1] += deltaY;
-            
-            lastTouchX = e.touches[0].clientX;
-            lastTouchY = e.touches[0].clientY;
-            canvas.setDirty(true, true); // Direct repaint command
-        } else if (e.touches.length === 2) {
-            // Scale interpolation loop for pinch gestures
-            const currentDist = Math.hypot(
-                e.touches[0].clientX - e.touches[1].clientX,
-                e.touches[0].clientY - e.touches[1].clientY
-            );
-            
-            if (lastTouchDist > 0) {
-                const factor = currentDist / lastTouchDist;
-                // Binds camera scaling strictly between 0.35x and 1.5x zoom floors
-                canvas.ds.scale = Math.min(Math.max(canvas.ds.scale * factor, 0.35), 1.5);
-                canvas.setDirty(true, true);
-            }
-            lastTouchDist = currentDist;
+            redirectTouchEvent('mousemove', e.touches[0]);
         }
+    }, { passive: false });
+
+    canvasEl.addEventListener('touchend', (e) => {
+        redirectTouchEvent('mouseup', e.changedTouches[0]);
     }, { passive: false });
 }

@@ -233,24 +233,21 @@ p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35
    PRODUCTION-GRADE MOBILE OVERRIDES (SCREENS < 768px)
    ======================================================== */
 @media (max-width: 768px) {
-    /* Prevent hardware viewport breaking */
+    /* Allow layout streams to handle smooth finger scrolling */
     body {
+        overflow-y: auto !important;
         overflow-x: hidden !important;
     }
 
-    /* 1. RE-ALIGN COMPACT HEADER STACK */
+    /* 1. COLLAPSE NAVIGATION STACK */
     .top-nav {
+        position: relative !important;
         height: auto !important;
-        min-height: 95px !important; /* Dynamically stretches to clear button rows */
+        min-height: 100px !important;
         flex-direction: column !important;
         justify-content: center !important;
-        padding: 8px 15px !important;
-        gap: 6px !important;
-    }
-    
-    .nav-logo {
-        font-size: 0.95rem !important;
-        letter-spacing: 1px !important;
+        padding: 10px !important;
+        gap: 8px !important;
     }
     
     .top-nav div[style*="display: flex"] {
@@ -262,101 +259,110 @@ p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35
     .back-btn {
         flex: 1 !important;
         text-align: center !important;
-        padding: 6px 10px !important;
-        font-size: 0.72rem !important;
+        padding: 8px !important;
+        font-size: 0.75rem !important;
         white-space: nowrap !important;
     }
 
-    /* 2. SCALE MASTER WORKSPACE SPLIT */
+    /* 2. CONVERT WORKSPACE FROM POSITION:FIXED TO STANDARD FLOW */
     .fixed-ui {
-        top: 95px !important; /* Sits flush below the header */
-        height: calc(100vh - 95px) !important;
-        flex-direction: column-reverse !important; /* Video on top half, Text on bottom half */
+        position: relative !important;
+        top: 0 !important;
+        height: auto !important;
+        flex-direction: column-reverse !important; /* Media on top, text on bottom */
         display: flex !important;
     }
 
-    /* 3. CENTER GRAPHICS CONTAINER (TOP HALF) */
+    /* 3. CENTER & FRAME THE STICKY VIDEO BOX */
     .media-column {
         width: 100% !important;
-        height: 45% !important; /* Holds top viewport slice allocation */
+        height: auto !important;
+        position: sticky !important;
+        top: 0; /* Snaps and locks to the top of the display when scrolling down */
+        z-index: 50 !important;
         padding: 0 !important;
-        border-bottom: 1px solid var(--border-soft) !important;
+        background: var(--bg-dark) !important;
     }
 
     .media-stack {
         width: 100% !important;
-        height: 100% !important;
-        padding: 10px !important; /* Drastically drops boundary padding for high asset scaling */
+        max-width: 100% !important;
+        height: auto !important;
+        aspect-ratio: 16 / 9 !important; /* Enforces clean cinematic layout boxes */
         border-radius: 0 !important;
         border: none !important;
-        box-shadow: none !important;
-        aspect-ratio: auto !important; /* Clears fixed desktop ratio constraints */
+        padding: 0 !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.9) !important;
     }
 
-    /* CRITICAL POSITIONING BUGFIX: Forces absolute re-centering within mobile split window */
+    /* RESET POSITIONAL COORDINATES EXPLICITLY */
     .media-stack .bg-media {
-        top: 50% !important;
-        left: 50% !important;
-        position: absolute !important;
-        transform: translate3d(-50%, -50%, 0) !important; /* Overrides legacy 1024px offsets */
-        width: auto !important;
-        height: auto !important;
-        max-width: calc(100% - 16px) !important;
-        max-height: calc(100% - 16px) !important;
-        object-fit: contain !important; /* Maintains clean aspect ratios without cropping */
-        -webkit-mask-image: none !important; /* Disables alpha feather mask on narrow frames */
+        position: relative !important;
+        top: 0 !important;
+        left: 0 !important;
+        transform: none !important; /* Neutralizes absolute positioning shifts completely */
+        width: 100% !important;
+        height: 100% !important;
+        max-width: 100% !important;
+        max-height: 100% !important;
+        object-fit: cover !important; /* Stretches and maps media fluidly inside the canvas boundaries */
+        border-radius: 0 !important;
+        -webkit-mask-image: none !important; 
         mask-image: none !important;
     }
 
-    /* 4. COMPACT CONTENT CARD PACKSPACE (BOTTOM HALF) */
+    /* 4. FLUID STALATITE FLOW FOR CARDS */
     .text-column {
         width: 100% !important;
-        height: 55% !important; /* Holds bottom tracking slice allocation */
-        padding: 0 !important;
-    }
-
-    /* Tight margins to completely stop text overflow layouts */
-    .step {
-        width: 94% !important;
-        max-width: 100% !important;
-        padding: 15px 12px !important; 
-        border-radius: 8px !important;
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7) !important;
+        height: auto !important;
+        padding: 20px 15px !important;
         box-sizing: border-box !important;
-        min-height: auto !important;
-        position: absolute !important;
-        top: 50% !important;
-        left: 50% !important;
-        transform: translate3d(-50%, -50%, 0) scale(0.9) !important; /* Keeps center tracking safe */
-    }
-    
-    .step.is-active {
-        transform: translate3d(-50%, -50%, 0) scale(1) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 30px !important;
     }
 
-    /* Typography scaling matrix matching the Pixel 8 Pro grid profile */
-    .step h1 { font-size: 1.5rem !important; margin-bottom: 4px !important; }
-    .step h2 { font-size: 0.9rem !important; margin-bottom: 8px !important; letter-spacing: 1px !important; }
-    .step p { font-size: 0.82rem !important; line-height: 1.4 !important; margin-bottom: 14px !important; }
+    /* Convert cards into standalone blocks */
+    .step {
+        position: relative !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        transform: none !important;
+        padding: 24px 20px !important;
+        box-sizing: border-box !important;
+        opacity: 0.3 !important; /* Dims out inactive sections cleanly */
+        filter: blur(0px) !important;
+        transition: opacity 0.4s ease !important;
+    }
+
+    /* Highlights the active section cleanly */
+    .step.is-active {
+        opacity: 1 !important;
+        border-color: var(--accent-teal) !important;
+    }
+
+    /* Proportional micro-typography settings */
+    .step h1 { font-size: 1.6rem !important; }
+    .step h2 { font-size: 1.05rem !important; color: var(--accent-teal) !important; }
+    .step p { font-size: 0.9rem !important; line-height: 1.5 !important; color: var(--text-main) !important; }
     
     .tech-stack {
-        font-size: 0.68rem !important;
-        padding: 6px 10px !important;
-        letter-spacing: 1px !important;
+        font-size: 0.72rem !important;
+        padding: 8px 12px !important;
         transform: none !important;
-        margin-top: 0 !important;
+        opacity: 1 !important;
         display: inline-block !important;
     }
 
-    /* Contact Form overlay sheets */
+    /* Modal Sheet optimization */
     .modal-content {
         width: 95% !important;
-        padding: 24px !important;
-        box-sizing: border-box !important;
+        padding: 20px !important;
     }
     
     .input-row {
         flex-direction: column !important;
-        gap: 0 !important;
     }
 }

@@ -1,0 +1,18 @@
+# --- OS Specific Files ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- VS Code IDE Configuration ---
+.vscode/.phpmd
+.vscode/project.xcworkspace
+.vscode/tsconfig.json
+# Note: Keep .vscode/settings.json tracked if you have custom workspace setups, 
+# otherwise uncomment the line below to drop the whole folder:
+# .vscode/
+
+# --- Development Logs & Backups ---
+*.log
+*_backup/
+*~
+.crswap

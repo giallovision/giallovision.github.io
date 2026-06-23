@@ -1,0 +1,1 @@
+Get-ChildItem -Path . -Recurse -File | Where-Object { $_.FullName -notmatch 'node_modules|\.git|assets' -and $_.Extension -match '\.(js|html|css)$' } | ForEach-Object { "`n`n=== $($_.FullName.Replace((Get-Location).Path + '\', '')) ===`n"; Get-Content $_.FullName } | Out-File codebase_dump.txt -Encoding utf8

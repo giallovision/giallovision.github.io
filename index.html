@@ -2,102 +2,78 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GIALLOVISION</title>
-    <!-- Bootstrap -->
-    <link href="css/bootstrap-4.4.1.css" rel="stylesheet">
+    <title>Giallovision - Sphere Application</title>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/litegraph.js/css/litegraph.css">
     <style>
-        .navbar {
-            display: flex;
-            justify-content: center; /* Center horizontally */
-            align-items: center; /* Center vertically */
-            margin-bottom: 50px; /* Add spacing below the navbar */
-        }
-        .navbar-brand img {
-            width: 256px; /* Adjust as needed */
-            height: 128px; /* Adjust as needed */
-        }
-        .navbar-brand {
-            padding: 0; /* Remove padding to prevent extra space around the logo */
-        }
         body {
-            background-color: #000;
-            color: #fff;
+            background-color: #202020;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        .carousel {
-            margin-bottom: 50px; /* Adjust spacing between carousel and form */
-        }
-        .mt-4 {
-            margin-top: 50px; /* Adjust spacing between form and footer */
-        }
-		/* Media query for smaller screens */
-        @media (max-width: 768px) {
-            /* Adjust the width of the iframe containing the YouTube video */
-            #myCarousel iframe {
-                max-width: 100%;
-            }
-
-            /* Adjust the width of the iframe containing the Google Form */
-            iframe[src*="docs.google.com/forms"] {
-                max-width: 100%;
-            }
+        #mycanvas {
+            width: 100vw;
+            height: 100vh;
+            display: block;
         }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-black">
-        <a class="navbar-brand" href="#"><img src="images/Logos/Giallovision Logo.png" alt="Giallovision Logo"></a>
-    </nav>
 
-    <section>
-      <div class="container">
-        <div class="row">
-          <div class="col-12 text-center">
-            <div id="myCarousel" class="carousel slide" data-ride="carousel">
-              <!-- Wrapper for slides -->
-              <div class="carousel-inner">
-                <div class="carousel-item active">
-                  <iframe src="https://www.youtube.com/embed/pKhX2F31Hec?si=NtZu4G22uTXpL6KA&vq=hd1080" width="560" height="315" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-                </div>
-                <!-- Add more carousel items with embedded videos here if needed -->
-              </div>
+<canvas id="mycanvas"></canvas>
 
-              <!-- Controls (optional) -->
-              <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="sr-only">Previous</span>
-              </a>
-              <a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="sr-only">Next</span>
-              </a>
-            </div>
-          </div>
-        </div>
-		<!-- Embed Google Form -->
-        <div class="row mt-4">
-            <div class="col-12 text-center">
-                <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSespfypMhkNE0Y7LZKfPdgz16NfpG1JImk33emkstdUD2gOHQ/viewform?embedded=true" width="560" height="687" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
-            </div>
-        </div>
+<div id="contactModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(4px);">
+    <div style="position: relative; width: 90%; max-width: 650px; background: #1c1c1c; border: 1px solid #333; border-radius: 8px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
+        <button id="closeModal" style="position: absolute; top: 15px; right: 15px; background: #ff4444; border: none; color: white; border-radius: 4px; width: 30px; height: 30px; cursor: pointer; font-weight: bold; transition: background 0.2s;">X</button>
+        <h2 style="color: #fff; margin-top: 0; font-family: sans-serif;">Open Comms</h2>
+        
+        <form action="https://formspree.io/f/YOUR_ENDPOINT_ID" method="POST" style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+            
+            <label style="color: #ccc; font-size: 14px; font-family: sans-serif;">
+                Name:
+                <input type="text" name="name" required style="width: 100%; padding: 10px; margin-top: 5px; background: #2b2b2b; border: 1px solid #444; color: white; border-radius: 4px; box-sizing: border-box;">
+            </label>
+
+            <label style="color: #ccc; font-size: 14px; font-family: sans-serif;">
+                Email:
+                <input type="email" name="email" required style="width: 100%; padding: 10px; margin-top: 5px; background: #2b2b2b; border: 1px solid #444; color: white; border-radius: 4px; box-sizing: border-box;">
+            </label>
+
+            <label style="color: #ccc; font-size: 14px; font-family: sans-serif;">
+                Nature of Inquiry:
+                <select name="inquiry_type" required style="width: 100%; padding: 10px; margin-top: 5px; background: #2b2b2b; border: 1px solid #444; color: white; border-radius: 4px; box-sizing: border-box;">
+                    <option value="Live Event / V1">Live Event / V1 Video Lead</option>
+                    <option value="Generative AI">Generative AI / Media Pipeline</option>
+                    <option value="Consulting">Technical Infrastructure / Consulting</option>
+                </select>
+            </label>
+
+            <label style="color: #ccc; font-size: 14px; font-family: sans-serif;">
+                Project Details:
+                <textarea name="message" rows="4" required style="width: 100%; padding: 10px; margin-top: 5px; background: #2b2b2b; border: 1px solid #444; color: white; border-radius: 4px; box-sizing: border-box; resize: vertical;"></textarea>
+            </label>
+
+            <button type="submit" style="background: #35ff5e; color: #111; font-weight: bold; padding: 12px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px;">Transmit Message</button>
+        </form>
     </div>
-    </section>
+</div>
 
-    <footer class="text-center mt-4">
-      <div class="container">
-        <div class="row">
-          <div class="col-12">
-            <p>Copyright 2024 © GIALLOVISION LLC. All rights reserved.</p>
-          </div>
-        </div>
-      </div>
-    </footer>
+<script src="https://unpkg.com/litegraph.js/build/litegraph.js"></script>
+<script type="module" src="./src/main.js"></script>
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="js/jquery-3.4.1.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap-4.4.1.js"></script>
-  </body>
+<script>
+    const modal = document.getElementById('contactModal');
+    const closeBtn = document.getElementById('closeModal');
+
+    // Close on X button click
+    closeBtn.addEventListener('click', () => modal.style.display = 'none');
+
+    // Close when clicking outside the modal box
+    modal.addEventListener('click', (e) => {
+        if(e.target === modal) modal.style.display = 'none';
+    });
+</script>
+</body>
 </html>

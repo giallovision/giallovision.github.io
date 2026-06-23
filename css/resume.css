@@ -1,0 +1,167 @@
+:root {
+    --bg-dark: #090e13;         
+    --bg-panel: rgba(9, 14, 19, 0.4); 
+    --border-soft: rgba(255, 255, 255, 0.08);
+    --text-main: #f8fafc;       
+    --text-dim: #64748b; 
+    --accent-teal: #00b4d8;    
+    --accent-gold: #ffb703;    
+}
+
+body {
+    margin: 0; color: var(--text-main); font-family: 'Roboto', sans-serif;
+    font-weight: 400; overflow-x: hidden; background-color: var(--bg-dark);
+    -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}
+
+#glcanvas {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: -1; pointer-events: none;
+}
+
+/* --- NAVIGATION HEADER --- */
+.top-nav {
+    position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+    background: var(--bg-panel); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid var(--border-soft); display: flex; align-items: center; 
+    justify-content: space-between; padding: 0 5%; box-sizing: border-box; z-index: 100;
+}
+
+.nav-logo { font-weight: 900; color: var(--text-main); letter-spacing: 3px; font-size: 1.1rem; }
+.nav-logo span { color: var(--accent-gold); }
+
+.back-btn {
+    color: #000; background-color: var(--accent-gold); text-decoration: none; padding: 10px 20px;
+    font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; border-radius: 4px;
+    transition: all 0.2s ease;
+}
+.back-btn:hover { background-color: #ffc333; box-shadow: 0 4px 15px rgba(255, 183, 3, 0.3); }
+
+/* --- MASTER UI CONTAINER LAYER --- */
+.fixed-ui {
+    position: fixed; top: 60px; left: 0; right: 0; width: 100%; height: calc(100vh - 60px);
+    display: flex; max-width: 1800px; margin: 0 auto; z-index: 10;
+    transform: translate3d(0, 0, 0); /* Forces GPU layer caching for parent layout tree */
+    pointer-events: none; /* Allows canvas scrolls to pass through layout deadzones */
+}
+
+/* Shifted text column left and made it slightly narrower */
+.text-column { width: 38%; position: relative; padding: 0 4% 0 2%; height: 100%; pointer-events: auto; }
+
+/* Expanded the media column to take up the remaining space */
+.media-column { width: 62%; height: 100%; display: flex; align-items: center; justify-content: center; }
+
+/* ==========================================
+   CINEMATIC TEXT TRANSITIONS & GLASS PANE (LEFT SIDE)
+   ========================================== */
+.step {
+    position: absolute; 
+    top: 50%; left: 50%; 
+    width: 90%; max-width: 580px; 
+    padding: 50px 45px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+    
+    background: rgba(9, 14, 19, 0.6);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    
+    opacity: 0; 
+    transform: translate3d(-50%, -50%, 0) scale(0.9) skewY(2deg); 
+    filter: blur(15px); pointer-events: none;
+    
+    /* GPU optimization settings */
+    will-change: transform, opacity, filter;
+    transition: all 0.9s cubic-bezier(0.19, 1, 0.22, 1); 
+}
+
+.step.is-active { 
+    opacity: 1; 
+    transform: translate3d(-50%, -50%, 0) scale(1) skewY(0deg); 
+    filter: blur(0px); pointer-events: auto; 
+}
+
+/* Typography elements */
+h1 { color: var(--accent-gold); font-size: 3rem; margin: 0 0 10px 0; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; line-height: 1.1; }
+h2 { color: var(--accent-teal); font-size: 1.35rem; margin: 0 0 20px 0; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
+p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35px 0; font-weight: 400; transition: color 0.4s ease; }
+.step.is-active p { color: var(--text-main); text-shadow: 0 4px 20px rgba(0,0,0,0.9); }
+
+.tech-stack { 
+    color: var(--accent-gold); font-size: 0.85rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    background: rgba(0, 0, 0, 0.8); padding: 12px 20px; border-radius: 4px; border: 1px solid var(--border-soft); display: inline-block;
+    transform: translate3d(0, 20px, 0); opacity: 0; 
+    will-change: transform, opacity;
+    transition: all 0.9s cubic-bezier(0.19, 1, 0.22, 1) 0.1s; 
+}
+.step.is-active .tech-stack { transform: translate3d(0, 0, 0); opacity: 1; }
+
+/* --- THE HUD MEDIA STACK (RIGHT SIDE) --- */
+.media-stack {
+    position: relative; 
+    width: 100%; 
+    padding: 45px; /* Keeps the clean 45px glass framing border margins */
+    background: rgba(9, 14, 19, 0.4); 
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border-radius: 12px; 
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255,255,255,0.1);
+    
+    /* FIX: Tightened from 16/11 to 16/9 to strip out the excess vertical height */
+    aspect-ratio: 16 / 9; 
+    
+    overflow: hidden;
+    pointer-events: auto;
+    transform: translate3d(0, 0, 0);
+}
+
+/* Universal Media Crossfader Setup (Videos & Images) */
+.media-stack .bg-media { 
+    position: absolute; 
+    /* Center the shrink-wrapped asset perfectly inside the glass frame padding */
+    top: 50%; left: 50%;
+    transform: translate3d(-50%, -50%, 0);
+    
+    /* Inset bounds: matches the 45px padding margins seamlessly */
+    max-width: calc(100% - 90px); 
+    max-height: calc(100% - 90px); 
+    width: auto; 
+    height: auto;
+    
+    object-fit: contain; 
+    border-radius: 8px; 
+    
+    /* 4-Way Alpha Feather Blend Matrix */
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%),
+                        linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%);
+    -webkit-mask-composite: source-in; /* Forces webkit engines to intersect the vertical and horizontal gradients */
+    
+    mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%),
+                linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%);
+    mask-composite: intersect;
+
+    will-change: opacity; 
+    transition: opacity 0.8s ease-in-out; 
+}
+
+/* Ensure the crossfader transitions respect the centered absolute positions */
+.media-stack .active-media { opacity: 1; z-index: 2; }
+.media-stack .hidden-media { opacity: 0; z-index: 1; }
+
+/* Consolidated crossfading selectors driven cleanly by the media engine script */
+.media-stack .active-media { opacity: 1; z-index: 2; }
+.media-stack .hidden-media { opacity: 0; z-index: 1; }
+
+/* --- RESPONSIVE BACKUP VIEWPORTS --- */
+@media (max-width: 1024px) {
+    .fixed-ui { flex-direction: column-reverse; }
+    .text-column { width: 100%; height: 60%; }
+    .media-column { width: 100%; height: 40%; border-bottom: 1px solid var(--border-soft); background: var(--bg-dark); }
+    .step { transform: translate3d(-50%, -50%, 0); width: 85%; padding: 30px 20px; }
+    h1 { font-size: 2.2rem; }
+    h2 { font-size: 1.1rem; }
+    p { font-size: 1rem; }
+    .media-stack { width: 100%; border-radius: 0; border: none; padding: 20px; }
+    .media-stack .bg-media { top: 20px; left: 20px; width: calc(100% - 40px); height: calc(100% - 40px); }
+}

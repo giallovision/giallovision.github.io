@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giallovision | Pipeline & Experience</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/resume.css">
+</head>
+<body>
+
+    <canvas id="glcanvas"></canvas>
+
+    <nav class="top-nav">
+        <div class="nav-logo">GIALLOVISION // <span>CORE</span></div>
+        <a href="index.html" class="back-btn">Return To Node Network</a>
+    </nav>
+
+    <div class="fixed-ui">
+        <div class="text-column">
+            
+            <div class="step is-active" 
+                 data-videos="./assets/videos/GVIS-WAN1.mp4, ./assets/videos/SceneShift.mp4"
+                 data-img="">
+                <h1>Giallovision</h1>
+                <h2>10+ Years Architecting Technical Systems / Media Pipelines / Large Scale Events</h2>
+                <p>Ingraining high-performance automation into large-format experiential environments. Specializing in bridging local bare-metal system architecture, custom open-source software extensions, and real-time live video display arrays into unified visual frameworks.</p>
+                <div class="tech-stack">> INIT: DEPLOYING ANSIBLE FRAMEWORK - VRAM ALLOCATED</div>
+            </div>
+
+            <div class="step" 
+                 data-videos="./assets/videos/Diff1.mp4, ./assets/videos/Diff2.mp4, ./assets/videos/Diff3.mp4"
+                 data-img="">
+                <h2>Nodal Workflow Design & AI Frameworks</h2>
+                <p>Constructing high-efficiency generative node models utilizing localized ComfyUI environments. Designing custom automation pipelines to instantly generate, filter, and upscale high-fidelity background components—bypassing legacy offline rendering workflows while maintaining exact control over latent space weights.</p>
+                <div class="tech-stack">> AI PLATFORMS: COMFYUI / KOHYA_SS / OPENWEBUI / LLM-FACTORY / ACE-STEP / CUSTOM EXTENSIONS</div>
+            </div>
+
+            <div class="step" 
+                 data-videos="./assets/videos/OrpheusBG.mp4, ./assets/videos/OrpheusAtmos.mp4"
+                 data-img="">
+                <h2>Live Media Operations / System Engineering</h2>
+                <p>Orchestrating hardware mapping arrays and software playback pipelines for high-stakes broadcast environments. Deploying real-time video canvas matrices via Resolume Arena and TouchDesigner, integrated directly into professional engineering processors including COEX VMP and Pixelhue/NovaStar control networks for rock-solid physical pixel alignment.</p>
+                <div class="tech-stack">> EVENT PLATFORMS: RESOLUME / TOUCHDESIGNER / TOUCH-OSC / NDI / COEX VMP / PIXELHUE</div>
+            </div>
+
+            <div class="step" 
+                 data-videos="./assets/videos/Jacket-WAN.mp4, ./assets/videos/ControlPose.mp4"
+                 data-img="">
+                <h2>Ansible Automation & Docker Infrastructure</h2>
+                <p>Orchestrating version-controlled bare-metal compute pools using automated Ansible playbooks for seamless configuration management and rapid node deployment. Containerizing highly specialized environments—including local LLM micro-servers via Ollama, internal database engines, and custom analytics tools—using raw Docker environments distributed across scaled Linux hardware and Proxmox hypervisors.</p>
+                <div class="tech-stack">> DEVOPS: ANSIBLE / DOCKER / PROXMOX / N8N / OLLAMA</div>
+            </div>
+
+            <div class="step" 
+                 data-videos="./assets/videos/LarysaAnimaAtmos.mp4, ./assets/videos/LarysaPan.mp4"
+                 data-img="./assets/images/TouchOSC.png">
+                <h2>CAD Pre-Vis & Code Execution</h2>
+                <p>Translating spatial geometry into physical execution. Developing stage rigging blue-prints inside Vectorworks, establishing 3D environmental pre-visualizations in Depence, and engineering embedded controller automation sketches via C++, Python scripting, and interactive Lua arrays to manipulate physical fixtures directly via OSC.</p>
+                <div class="tech-stack">> STACK: VECTORWORKS / DEPENCE / BASH / PYTHON / LUA / C++</div>
+            </div>
+
+        </div>
+
+        <div class="media-column" id="media-anchor">
+            <div class="media-stack" id="vid-wrap">
+                <video class="bg-media active-media" id="portfolio-video-1" muted playsinline preload="auto"></video>
+                <video class="bg-media hidden-media" id="portfolio-video-2" muted playsinline preload="auto"></video>
+                <img class="bg-media hidden-media" id="portfolio-img-1" alt="Generative Output">
+                <img class="bg-media hidden-media" id="portfolio-img-2" alt="Generative Output">
+            </div>
+        </div>
+    </div>
+
+    <div id="scroll-proxy"></div>
+
+    <script type="module" src="./src/portfolio_app.js"></script>
+</body>
+</html>

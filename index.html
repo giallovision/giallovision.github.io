@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giallovision - Sphere Application</title>
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/litegraph.js/css/litegraph.css">
+    
     <style>
         body {
             background-color: #202020;
@@ -13,67 +14,135 @@
             overflow: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
         #mycanvas {
             width: 100vw;
             height: 100vh;
             display: block;
         }
+
+        /* ==========================================
+           CONTACT MODAL OVERLAY (STEALTH BRIDGE)
+           ========================================== */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            display: none; align-items: center; justify-content: center; z-index: 999;
+        }
+
+        .modal-content {
+            position: relative; width: 90%; max-width: 550px;
+            background: #090e13; border: 1px solid rgba(33, 54, 77, 0.8);
+            border-radius: 8px; padding: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9), inset 0 0 20px rgba(33, 54, 77, 0.5);
+        }
+
+        .close-modal {
+            position: absolute; top: 15px; right: 20px; background: none; border: none;
+            color: #64748b; font-family: monospace; font-size: 14px; cursor: pointer; transition: color 0.2s;
+        }
+        .close-modal:hover { color: #ffb703; }
+
+        .modal-content h2 { font-size: 1.8rem; margin-top: 0; margin-bottom: 10px; color: #f8fafc; }
+        .modal-content p { font-size: 0.95rem; margin-bottom: 25px; color: #64748b; }
+
+        .input-row { display: flex; gap: 15px; margin-bottom: 15px; }
+        .input-row input { flex: 1; }
+
+        .modal-content input[type="text"], 
+        .modal-content input[type="email"], 
+        .modal-content select, 
+        .modal-content textarea {
+            width: 100%; padding: 12px; margin-bottom: 15px;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+            color: #f8fafc; border-radius: 4px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 0.95rem; box-sizing: border-box; transition: border-color 0.3s;
+        }
+        .modal-content input:focus, .modal-content select:focus, .modal-content textarea:focus {
+            outline: none; border-color: #00b4d8; background: rgba(0, 180, 216, 0.05);
+        }
+
+        /* --> THE FIX: Force dark background on dropdown options so white text remains visible <-- */
+        .modal-content option {
+            background-color: #090e13;
+            color: #f8fafc;
+        }
+
+        .timeline-wrapper { margin-bottom: 25px; text-align: left; }
+        .timeline-wrapper label { display: block; font-size: 0.85rem; color: #64748b; margin-bottom: 10px; }
+        .radio-group { display: flex; gap: 10px; justify-content: space-between; }
+        .radio-group input[type="radio"] { display: none; }
+        .radio-group label {
+            flex: 1; text-align: center; padding: 10px; background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; cursor: pointer; transition: all 0.2s; margin: 0;
+        }
+        .radio-group input[type="radio"]:checked + label {
+            background: #00b4d8; color: #000; font-weight: bold; border-color: #00b4d8;
+            box-shadow: 0 0 15px rgba(0, 180, 216, 0.4);
+        }
+
+        .transmit-btn {
+            width: 100%; padding: 15px; background: #21364d83; border: 1px solid #00b4d8;
+            color: #00b4d8; font-family: monospace; font-size: 1rem; font-weight: bold;
+            border-radius: 4px; cursor: pointer; transition: all 0.3s;
+        }
+        .transmit-btn:hover { background: #00b4d8; color: #000; box-shadow: 0 0 20px rgba(0, 180, 216, 0.4); }
     </style>
 </head>
 <body>
 
-<canvas id="mycanvas"></canvas>
+    <canvas id="mycanvas"></canvas>
 
-<div id="contactModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(4px);">
-    <div style="position: relative; width: 90%; max-width: 650px; background: #1c1c1c; border: 1px solid #333; border-radius: 8px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
-        <button id="closeModal" style="position: absolute; top: 15px; right: 15px; background: #ff4444; border: none; color: white; border-radius: 4px; width: 30px; height: 30px; cursor: pointer; font-weight: bold; transition: background 0.2s;">X</button>
-        <h2 style="color: #fff; margin-top: 0; font-family: sans-serif;">Open Comms</h2>
-        
-        <form action="https://formspree.io/f/YOUR_ENDPOINT_ID" method="POST" style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+    <div id="contactModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-modal" onclick="document.getElementById('contactModal').style.display='none'">[X] CLOSE</button>
             
-            <label style="color: #ccc; font-size: 14px; font-family: sans-serif;">
-                Name:
-                <input type="text" name="name" required style="width: 100%; padding: 10px; margin-top: 5px; background: #2b2b2b; border: 1px solid #444; color: white; border-radius: 4px; box-sizing: border-box;">
-            </label>
+            <h2>INITIATE SIGNAL</h2>
+            <p>Connecting your technical requirements to high-performance architecture.</p>
 
-            <label style="color: #ccc; font-size: 14px; font-family: sans-serif;">
-                Email:
-                <input type="email" name="email" required style="width: 100%; padding: 10px; margin-top: 5px; background: #2b2b2b; border: 1px solid #444; color: white; border-radius: 4px; box-sizing: border-box;">
-            </label>
+            <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted){ document.getElementById('contact-ui').style.display='none'; document.getElementById('success-ui').style.display='block'; }"></iframe>
 
-            <label style="color: #ccc; font-size: 14px; font-family: sans-serif;">
-                Nature of Inquiry:
-                <select name="inquiry_type" required style="width: 100%; padding: 10px; margin-top: 5px; background: #2b2b2b; border: 1px solid #444; color: white; border-radius: 4px; box-sizing: border-box;">
-                    <option value="Live Event / V1">Live Event / V1 Video Lead</option>
-                    <option value="Generative AI">Generative AI / Media Pipeline</option>
-                    <option value="Consulting">Technical Infrastructure / Consulting</option>
+            <form id="contact-ui" action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSeamk3q1EarW9HLMH1VDNsiYc_M8TyQJ9pxYRyacWDW-hzZSg/formResponse" method="POST" target="hidden_iframe" onsubmit="submitted=true;">
+                
+                <div class="input-row">
+                    <input type="text" name="entry.495394181" placeholder="Full Name" required>
+                    <input type="email" name="entry.1785825907" placeholder="Email Address" required>
+                </div>
+
+                <select name="entry.2138410864" required>
+                    <option value="" disabled selected>Select Project Scope...</option>
+                    <option value="Technical Systems & Media Pipelines">Technical Systems & Media Pipelines</option>
+                    <option value="Nodal Workflow Design & AI Frameworks">Nodal Workflow Design & AI Frameworks</option>
+                    <option value="Live Media Operations & System Engineering">Live Media Operations & System Engineering</option>
+                    <option value="Ansible Automation & Docker Infrastructure">Ansible Automation & Docker Infrastructure</option>
+                    <option value="CAD Pre-Vis & Code Execution">CAD Pre-Vis & Code Execution</option>
                 </select>
-            </label>
 
-            <label style="color: #ccc; font-size: 14px; font-family: sans-serif;">
-                Project Details:
-                <textarea name="message" rows="4" required style="width: 100%; padding: 10px; margin-top: 5px; background: #2b2b2b; border: 1px solid #444; color: white; border-radius: 4px; box-sizing: border-box; resize: vertical;"></textarea>
-            </label>
+                <textarea name="entry.295514517" placeholder="Project Details" rows="4" required></textarea>
 
-            <button type="submit" style="background: #35ff5e; color: #111; font-weight: bold; padding: 12px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px;">Transmit Message</button>
-        </form>
+                <div class="timeline-wrapper">
+                    <label>Timeline / Urgency Level (1 = Flexible, 5 = Immediate)</label>
+                    <div class="radio-group">
+                        <input type="radio" id="t1" name="entry.1866891086" value="1" required><label for="t1">1</label>
+                        <input type="radio" id="t2" name="entry.1866891086" value="2"><label for="t2">2</label>
+                        <input type="radio" id="t3" name="entry.1866891086" value="3"><label for="t3">3</label>
+                        <input type="radio" id="t4" name="entry.1866891086" value="4"><label for="t4">4</label>
+                        <input type="radio" id="t5" name="entry.1866891086" value="5"><label for="t5">5</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="transmit-btn">> TRANSMIT INQUIRY</button>
+            </form>
+
+            <div id="success-ui" style="display:none; text-align:center; padding: 40px 0;">
+                <h3 style="color: #00b4d8;">[ SIGNAL RECEIVED ]</h3>
+                <p style="color: #64748b;">Your inquiry has been successfully routed to the core server.</p>
+            </div>
+        </div>
     </div>
-</div>
 
-<script src="https://unpkg.com/litegraph.js/build/litegraph.js"></script>
-<script type="module" src="./src/main.js"></script>
-
-<script>
-    const modal = document.getElementById('contactModal');
-    const closeBtn = document.getElementById('closeModal');
-
-    // Close on X button click
-    closeBtn.addEventListener('click', () => modal.style.display = 'none');
-
-    // Close when clicking outside the modal box
-    modal.addEventListener('click', (e) => {
-        if(e.target === modal) modal.style.display = 'none';
-    });
-</script>
+    <script>var submitted = false;</script>
+    <script src="https://unpkg.com/litegraph.js/build/litegraph.js"></script>
+    <script type="module" src="./src/main.js"></script>
 </body>
 </html>

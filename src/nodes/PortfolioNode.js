@@ -70,8 +70,9 @@ export function registerPortfolioNode() {
         if (local_pos[0] > btn_x && local_pos[0] < btn_x + btn_w &&
             local_pos[1] > btn_y && local_pos[1] < btn_y + btn_h) {
             
-            window.open("portfolio.html", "_blank");
-            return true; // Consume click to prevent dragging the node
+            // Navigate in the SAME tab to share the active, stable SSL connection
+            window.location.href = "portfolio.html";
+            return true; 
         }
     };
 

@@ -12,7 +12,7 @@ export function registerVHSNode() {
         
         this.size = [700, 500]; 
 
-        this.active_type = null; // 'video' or 'image'
+        this.active_type = null; 
         
         // Video Configuration
         this.video_el = document.createElement("video");
@@ -26,6 +26,14 @@ export function registerVHSNode() {
         this.img_el.crossOrigin = "anonymous";
 
         var that = this;
+
+        // FORCE REDRAWS WHEN ASYNC MEDIA FINISHES DOWNLOADING
+        this.img_el.onload = function() {
+            that.setDirtyCanvas(true, true);
+        };
+        this.video_el.oncanplay = function() {
+            that.setDirtyCanvas(true, true);
+        };
 
         window.addEventListener('giallo_video_start', () => {
             that.active_type = null;
@@ -62,7 +70,7 @@ export function registerVHSNode() {
             if (src.toLowerCase().endsWith('.mp4')) {
                 that.active_type = 'video';
                 that.video_el.src = src;
-                that.video_el.play();
+                that.video_el.play().catch(e => console.warn("Autoplay blocked:", e));
             } else {
                 that.active_type = 'image';
                 that.img_el.src = src;
@@ -80,11 +88,9 @@ export function registerVHSNode() {
         var v_height = this.size[1] - top_offset - margin;
 
         if (v_height > 0) {
-            // Always paint a clean matte black backdrop behind the viewing space
             ctx.fillStyle = "#000";
             ctx.fillRect(margin, top_offset, v_width, v_height);
 
-            // Aspect Ratio Calculation Engine
             let intrinsicWidth = 0;
             let intrinsicHeight = 0;
             let isReady = false;
@@ -93,32 +99,27 @@ export function registerVHSNode() {
                 intrinsicWidth = this.video_el.videoWidth;
                 intrinsicHeight = this.video_el.videoHeight;
                 isReady = true;
-            } else if (this.active_type === 'image' && this.img_el.complete) {
+            } else if (this.active_type === 'image' && this.img_el.complete && this.img_el.width > 0) {
                 intrinsicWidth = this.img_el.width;
                 intrinsicHeight = this.img_el.height;
                 isReady = true;
             }
 
             if (isReady && intrinsicWidth > 0 && intrinsicHeight > 0) {
-                // Compute the optimal scaling factor (Proportional Containment)
                 let scale = Math.min(v_width / intrinsicWidth, v_height / intrinsicHeight);
-                
                 let targetWidth = intrinsicWidth * scale;
                 let targetHeight = intrinsicHeight * scale;
                 
-                // Centering vectors inside the drawing container box
                 let targetX = margin + (v_width - targetWidth) / 2;
                 let targetY = top_offset + (v_height - targetHeight) / 2;
 
-                // Render asset inside the calculated box boundaries
                 if (this.active_type === 'video') {
                     ctx.drawImage(this.video_el, targetX, targetY, targetWidth, targetHeight);
-                    this.setDirtyCanvas(true, true); 
+                    this.setDirtyCanvas(true, true); // Keep looping frames for video
                 } else {
                     ctx.drawImage(this.img_el, targetX, targetY, targetWidth, targetHeight);
                 }
             } 
-            // Render Standby Output Placeholder
             else if (this.active_type === null) {
                 ctx.fillStyle = "#111";
                 ctx.fillRect(margin, top_offset, v_width, v_height);

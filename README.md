@@ -2,7 +2,7 @@
 
 **Interactive Nodal Portfolio Interface** A high-performance, browser-based experiential portfolio built to mimic the nodal workflow environments of professional media servers, AI generation pipelines, and system engineering architectures.
 
-![Giallovision Interface](assets/images/TouchOSC.png) ## ⚙️ Core Architecture
+## ⚙️ Core Architecture
 
 This application bypasses standard web design conventions to deliver a fully interactive, node-based workspace. Visitors physically interact with the UI by routing virtual cables, triggering events, and exploring system states.
 

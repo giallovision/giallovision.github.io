@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="chat-header">
                 <span class="chat-title">L4G0TT0 // OPS</span>
                 <div class="chat-header-actions">
-                    <button class="chat-action-btn" id="transmit-sow-btn" title="Send chat to Engineering">[ ⇪ TRANSMIT SOW ]</button>
+                    <button class="chat-action-btn" id="transmit-sow-btn" title="Send chat to Engineering">[ ⇪ SUBMIT CHAT ]</button>
                     <button class="chat-action-btn" id="expand-ai-btn" title="Expand">[ ⤢ ]</button>
                     <button class="chat-action-btn" id="close-ai-btn" title="Close">[X]</button>
                 </div>

@@ -44,17 +44,21 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         .chat-header {
-            padding: 15px 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3);
+            padding: 12px 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.4);
+            white-space: nowrap;
         }
-        .chat-header-actions { display: flex; gap: 10px; align-items: center; }
-        .chat-title { font-family: monospace; font-weight: bold; color: #ffb703; font-size: 0.9rem; letter-spacing: 1px; }
-        
+        .chat-header-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+        .chat-title { 
+            font-family: monospace; font-weight: bold; color: #ffb703; 
+            font-size: 0.78rem; letter-spacing: 0.5px; overflow: hidden; text-overflow: ellipsis; 
+        }
+
         .chat-action-btn { 
             background: none; border: none; color: #64748b; font-family: monospace; 
-            font-size: 0.8rem; cursor: pointer; transition: 0.2s; padding: 2px 4px;
+            font-size: 0.75rem; cursor: pointer; transition: 0.2s; padding: 2px 4px;
         }
-        .chat-action-btn:hover { color: #ffb703; }
+        .chat-action-btn:hover { color: #00b4d8; }
 
         .chat-messages { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
         .msg { padding: 12px 16px; border-radius: 6px; font-size: 0.9rem; line-height: 1.5; max-width: 85%; }

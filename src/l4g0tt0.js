@@ -252,7 +252,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify(payload)
             });
             
-            appendMessage("[SYSTEM] Transcript successfully dispatched to Joseph. Awaiting further directives.", 'msg-system');
+            appendMessage("[SYSTEM] Transcript successfully dispatched to Joey. Awaiting further directives.", 'msg-system');
             
             // 3. Trigger 60-second cooldown on success
             sowCooldownActive = true;

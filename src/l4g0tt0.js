@@ -25,17 +25,36 @@ document.addEventListener("DOMContentLoaded", () => {
             border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.9), inset 0 0 20px rgba(33, 54, 77, 0.5);
             display: none; flex-direction: column; overflow: hidden; font-family: 'Roboto', sans-serif;
-            transform: translateY(20px); opacity: 0; transition: all 0.3s ease;
+            transform: translateY(20px); opacity: 0; 
+            /* Added smooth scaling transitions for expand/contract */
+            transition: width 0.35s cubic-bezier(0.19, 1, 0.22, 1), 
+                        height 0.35s cubic-bezier(0.19, 1, 0.22, 1), 
+                        transform 0.3s ease, 
+                        opacity 0.3s ease;
         }
         #gvis-chat-container.is-open { display: flex; transform: translateY(0); opacity: 1; }
+
+        /* --- EXPANDED STATE (50% SCREEN SIZE) --- */
+        #gvis-chat-container.expanded {
+            width: 50vw !important;
+            height: 75vh !important;
+            bottom: 25px !important;
+            right: 25px !important;
+            box-shadow: 0 0 30px rgba(0, 180, 216, 0.25), 0 30px 80px rgba(0, 0, 0, 0.95);
+        }
 
         .chat-header {
             padding: 15px 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3);
         }
+        .chat-header-actions { display: flex; gap: 10px; align-items: center; }
         .chat-title { font-family: monospace; font-weight: bold; color: #ffb703; font-size: 0.9rem; letter-spacing: 1px; }
-        .close-chat { background: none; border: none; color: #64748b; font-family: monospace; cursor: pointer; transition: 0.2s; }
-        .close-chat:hover { color: #ffb703; }
+        
+        .chat-action-btn { 
+            background: none; border: none; color: #64748b; font-family: monospace; 
+            font-size: 0.8rem; cursor: pointer; transition: 0.2s; padding: 2px 4px;
+        }
+        .chat-action-btn:hover { color: #ffb703; }
 
         .chat-messages { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
         .msg { padding: 12px 16px; border-radius: 6px; font-size: 0.9rem; line-height: 1.5; max-width: 85%; }
@@ -73,8 +92,15 @@ document.addEventListener("DOMContentLoaded", () => {
             background: rgba(0,0,0,0.3); 
         }
 
+        /* Mobile Viewport Responsiveness */
         @media (max-width: 768px) {
             #gvis-chat-container { width: calc(100% - 40px); right: 20px; bottom: 80px; height: 60vh; }
+            #gvis-chat-container.expanded { 
+                width: calc(100% - 40px) !important; 
+                height: 85vh !important; 
+                right: 20px !important; 
+                bottom: 20px !important; 
+            }
         }
     `;
     document.head.appendChild(style);
@@ -85,7 +111,10 @@ document.addEventListener("DOMContentLoaded", () => {
         <div id="gvis-chat-container">
             <div class="chat-header">
                 <span class="chat-title">L4G0TT0 // SYNTHETIC OPS</span>
-                <button class="close-chat" id="close-ai-btn">[X]</button>
+                <div class="chat-header-actions">
+                    <button class="chat-action-btn" id="expand-ai-btn" title="Expand/Contract Chat">[ ⤢ EXPAND ]</button>
+                    <button class="chat-action-btn" id="close-ai-btn" title="Close Chat">[X]</button>
+                </div>
             </div>
             <div class="chat-messages" id="chat-messages">
                 <div class="msg msg-ai">Signal established. I am L4G0TT0, Giallovision's containerized intelligence instance. How can I assist you today?</div>
@@ -109,6 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const sendBtn = document.getElementById('send-btn');
     const toggleBtn = document.getElementById('ai-toggle-btn');
     const closeBtn = document.getElementById('close-ai-btn');
+    const expandBtn = document.getElementById('expand-ai-btn');
 
     function toggleChat() {
         if (chatContainer.classList.contains('is-open')) {
@@ -119,6 +149,16 @@ document.addEventListener("DOMContentLoaded", () => {
             setTimeout(() => chatContainer.classList.add('is-open'), 10); 
             chatInput.focus();
         }
+    }
+
+    function toggleExpand() {
+        const isExpanded = chatContainer.classList.toggle('expanded');
+        expandBtn.innerText = isExpanded ? '[ ⤡ CONTRACT ]' : '[ ⤢ EXPAND ]';
+        
+        // Recalibrate scroll offset after resize transition completes
+        setTimeout(() => {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }, 350);
     }
 
     async function sendMessage() {
@@ -165,6 +205,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     toggleBtn.addEventListener('click', toggleChat);
     closeBtn.addEventListener('click', toggleChat);
+    expandBtn.addEventListener('click', toggleExpand);
     chatInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
     sendBtn.addEventListener('click', sendMessage);
 });

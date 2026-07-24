@@ -61,14 +61,25 @@ document.addEventListener("DOMContentLoaded", () => {
         .msg-system { background: rgba(33, 54, 77, 0.5); border-left: 2px solid #00b4d8; color: #f8fafc; align-self: center; text-align: center; font-size: 0.8rem; width: 90%; }
 
         .chat-input-area { padding: 15px; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; gap: 10px; background: rgba(0,0,0,0.3); }
-        .chat-input-area input {
+        .chat-input-area input, .chat-input-area select {
             flex-grow: 1; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
-            color: #f8fafc; padding: 10px; border-radius: 4px; font-family: 'Roboto', sans-serif; font-size: 0.9rem; transition: 0.3s; outline: none;
+            color: #f8fafc; padding: 10px; border-radius: 4px; font-family: 'Roboto', sans-serif; font-size: 0.9rem; transition: 0.3s; outline: none; box-sizing: border-box; width: 100%;
         }
-        .chat-input-area input:focus { border-color: #00b4d8; background: rgba(0, 180, 216, 0.05); }
+        .chat-input-area input:focus, .chat-input-area select:focus { border-color: #00b4d8; background: rgba(0, 180, 216, 0.05); }
+
+        /* Dropdown High Contrast Fix */
+        .chat-input-area select option { background-color: #090e13; color: #00f0ff; }
+        .chat-input-area select option[disabled] { color: #64748b; }
 
         #send-btn { background: #21364d83; border: 1px solid #00b4d8; color: #00b4d8; font-weight: bold; border-radius: 4px; padding: 0 15px; cursor: pointer; transition: 0.3s; }
         #send-btn:hover { background: #00b4d8; color: #000; box-shadow: 0 0 15px rgba(0, 180, 216, 0.4); }
+        
+        #send-sow-btn { background: #ffb703; color: #000; border: none; padding: 12px; font-weight: bold; cursor: pointer; border-radius: 4px; transition: 0.3s; margin-top: 5px; }
+        #send-sow-btn:hover { box-shadow: 0 0 15px rgba(255, 183, 3, 0.4); }
+        
+        #cancel-sow-btn { background: none; border: none; color: #64748b; font-size: 0.8rem; cursor: pointer; margin-top: 5px; text-decoration: underline; }
+        #cancel-sow-btn:hover { color: #f8fafc; }
+
         .typing { font-family: monospace; color: #64748b; font-size: 0.8rem; border-left: 2px solid #64748b; }
 
         @media (max-width: 768px) {
@@ -98,10 +109,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 <button id="send-btn">></button>
             </div>
 
-            <!-- Email Capture Input (Hidden by default) -->
-            <div class="chat-input-area" id="email-capture-area" style="display:none; background: rgba(0, 180, 216, 0.1); border-top: 1px solid #00b4d8;">
-                <input type="email" id="sow-email-input" placeholder="Enter your email to dispatch..." required />
-                <button id="send-sow-btn" style="color: #ffb703; border-color: #ffb703;">SEND</button>
+            <!-- Enhanced Capture Input (Hidden by default) -->
+            <div class="chat-input-area" id="email-capture-area" style="display:none; flex-direction: column; gap: 8px; background: rgba(0, 180, 216, 0.1); border-top: 1px solid #00b4d8;">
+                <input type="text" id="sow-name-input" placeholder="Full Name (Optional)" />
+                <input type="email" id="sow-email-input" placeholder="Email Address (Required)" required />
+                <select id="sow-urgency-input">
+                    <option value="" disabled selected>Select Urgency...</option>
+                    <option value="1">1 - Flexible / Exploring</option>
+                    <option value="2">2 - Standard Timeline</option>
+                    <option value="3">3 - Moderate Priority</option>
+                    <option value="4">4 - High Priority</option>
+                    <option value="5">5 - Immediate / Urgent</option>
+                </select>
+                <button id="send-sow-btn">TRANSMIT TRANSCRIPT</button>
+                <button id="cancel-sow-btn">Cancel Transmission</button>
             </div>
         </div>
     `;
@@ -112,11 +133,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const chatMessages = document.getElementById('chat-messages');
     const chatInput = document.getElementById('chat-input');
     const toggleBtn = document.getElementById('ai-toggle-btn');
-    const sowEmailInput = document.getElementById('sow-email-input');
     
-    // UI Panels
+    // UI Panels & Inputs
     const standardInputArea = document.getElementById('standard-input-area');
     const emailCaptureArea = document.getElementById('email-capture-area');
+    const sowNameInput = document.getElementById('sow-name-input');
+    const sowEmailInput = document.getElementById('sow-email-input');
+    const sowUrgencyInput = document.getElementById('sow-urgency-input');
 
     // === MEMORY SYSTEM (sessionStorage) ===
     function saveChat() {
@@ -142,7 +165,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (save) saveChat();
     }
 
-    // Initialize Memory
     loadChat();
 
     // === TOGGLES ===
@@ -176,7 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
         appendMessage('> Thinking...', 'msg-ai typing', typingId, false);
 
         try {
-            const response = await fetch(WORKER_URL, {
+            const response = await fetch(WORKER_URL + "api/chat", {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: text })
@@ -199,33 +221,43 @@ document.addEventListener("DOMContentLoaded", () => {
     let isSubmitting = false;
     let sowCooldownActive = false;
 
+    // Open Capture UI
     document.getElementById('transmit-sow-btn').addEventListener('click', () => {
         if (sowCooldownActive) {
             alert("Transcript already transmitted. Please wait before sending again.");
             return;
         }
-        // Swap inputs
         standardInputArea.style.display = 'none';
         emailCaptureArea.style.display = 'flex';
-        appendMessage("[SYSTEM] Ready to transmit scope to engineering. Please enter your email address below to lock in the transcript.", 'msg-system');
-        sowEmailInput.focus();
+        appendMessage("[SYSTEM] Ready to transmit scope to engineering. Please verify details below to lock in the transcript.", 'msg-system');
+        sowNameInput.focus();
+    });
+
+    // Cancel Capture UI
+    document.getElementById('cancel-sow-btn').addEventListener('click', () => {
+        emailCaptureArea.style.display = 'none';
+        standardInputArea.style.display = 'flex';
+        sowNameInput.value = "";
+        sowEmailInput.value = "";
+        sowUrgencyInput.value = "";
     });
 
     async function submitTranscript() {
-        // 1. Guard against rapid multi-clicking
         if (isSubmitting) return;
 
         const email = sowEmailInput.value.trim();
+        const name = sowNameInput.value.trim();
+        const urgency = sowUrgencyInput.value;
+
         if (!email || !email.includes('@')) return alert("Invalid signal origin. Provide a valid email.");
 
         const sendBtn = document.getElementById('send-sow-btn');
-
-        // 2. Lock UI state
+        
         isSubmitting = true;
         sendBtn.disabled = true;
-        sendBtn.innerText = "...";
+        sendBtn.innerText = "TRANSMITTING...";
 
-        // Scrape current chat for the payload
+        // Scrape current chat
         let transcript = "";
         document.querySelectorAll('.msg').forEach(msg => {
             if (msg.classList.contains('typing') || msg.classList.contains('msg-system')) return;
@@ -233,17 +265,19 @@ document.addEventListener("DOMContentLoaded", () => {
             transcript += `${role}:\n${msg.innerText}\n\n`;
         });
 
-        // Use the existing Contact API Endpoint
+        // Apply fallback defaults if left blank
+        const finalName = name || "L4G0TT0 Chat Session";
+        const finalUrgency = urgency || "3";
+
         const payload = {
-            name: "L4G0TT0 Chat Session",
+            name: finalName,
             email: email,
             scope: "L4G0TT0 Chat Transcript",
             details: "TRANSCRIPT LOG:\n\n" + transcript,
-            urgency: "3"
+            urgency: finalUrgency
         };
 
         try {
-            // Uses your WORKER_URL variable to guarantee proper routing
             const targetUrl = WORKER_URL.endsWith('/') ? `${WORKER_URL}api/contact` : `${WORKER_URL}/api/contact`;
             
             await fetch(targetUrl, {
@@ -254,25 +288,24 @@ document.addEventListener("DOMContentLoaded", () => {
             
             appendMessage("[SYSTEM] Transcript successfully dispatched to Joey. Awaiting further directives.", 'msg-system');
             
-            // 3. Trigger 60-second cooldown on success
             sowCooldownActive = true;
             setTimeout(() => { sowCooldownActive = false; }, 60000);
 
             // Revert UI
             emailCaptureArea.style.display = 'none';
             standardInputArea.style.display = 'flex';
+            sowNameInput.value = "";
             sowEmailInput.value = "";
+            sowUrgencyInput.value = "";
             
         } catch (err) {
             alert("[ERR] Transmission failed.");
         } finally {
-            // 4. Unlock state whether successful or failed
             isSubmitting = false;
             sendBtn.disabled = false;
-            sendBtn.innerText = "SEND";
+            sendBtn.innerText = "TRANSMIT TRANSCRIPT";
         }
     }
 
     document.getElementById('send-sow-btn').addEventListener('click', submitTranscript);
-    sowEmailInput.addEventListener('keypress', e => { if (e.key === 'Enter') submitTranscript(); });
-}); // Ends DOMContentLoaded
+});

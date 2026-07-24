@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giallovision | About</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* BASE RESET & TYPOGRAPHY */
+        body, html {
+            margin: 0; padding: 0; background-color: #050505; color: #f8fafc;
+            font-family: 'Roboto', sans-serif; overflow-x: hidden;
+        }
+
+        /* --- NAVIGATION HEADER (FIXED, COHESIVE WITH REST OF SITE) --- */
+        .top-nav {
+            position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+            background: rgba(9, 14, 19, 0.6); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08); display: flex; align-items: center; 
+            justify-content: space-between; padding: 0 5%; box-sizing: border-box; z-index: 100;
+        }
+        .nav-logo { font-weight: 900; color: #f8fafc; letter-spacing: 3px; font-size: 1.1rem; text-transform: uppercase; }
+        .nav-logo span { color: #ffb703; }
+        .nav-links { display: flex; gap: 30px; align-items: center; }
+        
+        .nav-links a.nav-item {
+            color: #f8fafc; text-decoration: none; font-size: 0.85rem;
+            font-weight: 700; letter-spacing: 2px; text-transform: uppercase; transition: color 0.3s;
+        }
+        .nav-links a.nav-item:hover, 
+        .nav-links a.nav-item.active { 
+            color: #00b4d8; 
+        }
+
+        .back-btn {
+            color: #00b4d8; background-color: rgba(0, 180, 216, 0.08); 
+            border: 1px solid #00b4d8; text-decoration: none; padding: 8px 16px;
+            font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; border-radius: 4px;
+            transition: all 0.3s ease; cursor: pointer;
+        }
+        .back-btn:hover { 
+            background-color: #00b4d8; color: #000; 
+            box-shadow: 0 0 15px rgba(0, 180, 216, 0.4); 
+        }
+
+        /* ABOUT SECTION LAYOUT */
+        .about-container {
+            max-width: 1400px; margin: 120px auto 100px auto; padding: 0 5%;
+        }
+        .page-title {
+            font-size: 3.5rem; font-weight: 900; text-transform: uppercase;
+            letter-spacing: -1px; margin-bottom: 60px; color: #f8fafc;
+        }
+
+        /* CSS GRID FOR PROFILES */
+        .team-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
+        }
+
+        .profile-card {
+            background: rgba(9, 14, 19, 0.4); border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px; overflow: hidden; display: flex; flex-direction: column;
+        }
+
+        .profile-media {
+            width: 100%; height: 400px; background-color: #111; overflow: hidden;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .profile-media img, .profile-media video {
+            width: 100%; height: 100%; object-fit: cover; filter: grayscale(20%);
+        }
+        
+        /* DUAL IMAGE COLLAGE (Flexbox Split) */
+        .profile-media.collage {
+            display: flex;
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+        }
+        
+        .profile-media.collage img {
+            flex: 1; 
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(20%);
+            transition: flex 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), filter 0.4s ease;
+        }
+        
+        /* Adds a subtle architectural divider between the images */
+        .profile-media.collage img:first-child {
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Interactive Hover Expansion */
+        .profile-media.collage:hover img {
+            filter: grayscale(80%); 
+        }
+        
+        .profile-media.collage img:hover {
+            flex: 1.5; 
+            filter: grayscale(0%);
+        }
+
+        /* Adjust Y-axis framing for the rocknroll photo */
+        .profile-media.collage img:nth-child(2) {
+            object-position: 50% 30%; 
+        }
+
+        .profile-info { padding: 40px; }
+        .profile-role { 
+            color: #00b4d8; font-family: monospace; font-size: 0.9rem; 
+            letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; display: block;
+        }
+        .profile-name { 
+            font-size: 2rem; font-weight: 900; margin: 0 0 20px 0; color: #ffb703; 
+            text-transform: uppercase; letter-spacing: -0.5px;
+        }
+        .profile-bio { 
+            font-size: 1.05rem; line-height: 1.7; color: #64748b; margin: 0;
+        }
+
+        @media (max-width: 900px) {
+            .team-grid { grid-template-columns: 1fr; }
+            .top-nav { flex-direction: column; gap: 20px; }
+        }
+
+        /* CONTACT MODAL OVERLAY */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            display: none; align-items: center; justify-content: center; z-index: 999;
+        }
+
+        .modal-content {
+            position: relative; width: 90%; max-width: 550px;
+            background: #090e13; border: 1px solid rgba(33, 54, 77, 0.8);
+            border-radius: 8px; padding: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9), inset 0 0 20px rgba(33, 54, 77, 0.5);
+        }
+
+        .close-modal {
+            position: absolute; top: 15px; right: 20px; background: none; border: none;
+            color: #64748b; font-family: monospace; font-size: 14px; cursor: pointer; transition: color 0.2s;
+        }
+        .close-modal:hover { color: #ffb703; }
+
+        .modal-content h2 { font-size: 1.8rem; margin-top: 0; margin-bottom: 10px; color: #f8fafc; }
+        .modal-content p { font-size: 0.95rem; margin-bottom: 25px; color: #64748b; }
+
+        .input-row { display: flex; gap: 15px; margin-bottom: 15px; }
+        .input-row input { flex: 1; }
+
+        .modal-content input[type="text"], 
+        .modal-content input[type="email"], 
+        .modal-content select, 
+        .modal-content textarea {
+            width: 100%; padding: 12px; margin-bottom: 15px;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+            color: #f8fafc; border-radius: 4px; font-family: 'Roboto', sans-serif;
+            font-size: 0.95rem; box-sizing: border-box; transition: border-color 0.3s;
+        }
+        .modal-content input:focus, .modal-content select:focus, .modal-content textarea:focus {
+            outline: none; border-color: #00b4d8; background: rgba(0, 180, 216, 0.05);
+        }
+
+        .modal-content option {
+            background-color: #090e13;
+            color: #f8fafc;
+        }
+
+        .timeline-wrapper { margin-bottom: 25px; text-align: left; }
+        .timeline-wrapper label { display: block; font-size: 0.85rem; color: #64748b; margin-bottom: 10px; }
+        .radio-group { display: flex; gap: 10px; justify-content: space-between; }
+        .radio-group input[type="radio"] { display: none; }
+        .radio-group label {
+            flex: 1; text-align: center; padding: 10px; background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; cursor: pointer; transition: all 0.2s; margin: 0;
+        }
+        .radio-group input[type="radio"]:checked + label {
+            background: #00b4d8; color: #000; font-weight: bold; border-color: #00b4d8;
+            box-shadow: 0 0 15px rgba(0, 180, 216, 0.4);
+        }
+
+        .transmit-btn {
+            width: 100%; padding: 15px; background: #21364d83; border: 1px solid #00b4d8;
+            color: #00b4d8; font-family: monospace; font-size: 1rem; font-weight: bold;
+            border-radius: 4px; cursor: pointer; transition: all 0.3s;
+        }
+        .transmit-btn:hover { background: #00b4d8; color: #000; box-shadow: 0 0 20px rgba(0, 180, 216, 0.4); }
+    </style>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <div class="nav-logo">GIALLOVISION // <span>CORE</span></div>
+        <div class="nav-links">
+            <a href="/" class="nav-item">Work</a>
+            <a href="/services" class="nav-item">Services</a>
+            <a href="/nodes" class="nav-item">Nodes</a>
+            <a href="/about" class="nav-item">About</a>
+            <a href="#" class="back-btn" onclick="document.getElementById('contactModal').style.display='flex'">Contact</a>
+        </div>
+    </nav>
+
+    <div class="about-container">
+        <h1 class="page-title"></h1>
+        
+        <div class="team-grid">
+            
+            <div class="profile-card">
+                <!-- Added 'collage' class and the two new images -->
+                <div class="profile-media collage">
+                    <img src="./images/joey_comms.png" alt="Joey - Operations">
+                    <img src="./images/joey_rocknroll.png" alt="Joey - Live Execution">
+                </div>
+                <div class="profile-info">
+                    <span class="profile-role">Founder | Lead V1 & Pipeline Architect</span>
+                    <h2 class="profile-name">Joseph James Giallombardo III</h2>
+                    <p class="profile-bio">Bridging the gap between physical stage engineering and experimental software architecture. With over a decade of experience in massive-scale live entertainment, Joseph specializes in translating highly technical concepts into bulletproof, real-world deployments. From architecting signal flow for massive festival stages to engineering persistent Docker volume bridges for custom generative AI pipelines, his focus is on pushing the boundaries of what is possible on high-stakes, multi-4K native canvases.</p>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="profile-media">
+                    <!-- Injected poster attribute and internal fallback image -->
+                    <video autoplay muted loop playsinline poster="./assets/images/Orpheus2.png">
+                        <source src="./assets/videos/L4g0tt0_Core.mp4" type="video/mp4">
+                        <img src="./assets/images/Orpheus2.png" alt="L4G0TT0 - Offline">
+                    </video>
+                </div>
+                <div class="profile-info">
+                    <span class="profile-role">Synthetic Operations Assistant | AI Worker</span>
+                    <h2 class="profile-name">L4G0TT0</h2>
+                    <p class="profile-bio">The automation engine of Giallovision. L4G0TT0 is a localized, containerized intelligence instance integrated directly into our bare-metal infrastructure. Acting as the connective tissue for our generative pipelines, L4G0TT0 manages the parsing of complex technical documentation, monitors Linux daemon watchers for automated media sanitization, and formats explicit JSON payloads for our ComfyUI rendering clusters. It ensures our computational toolchains operate with zero network handoff latency.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- INJECT CONTACT MODAL HERE -->
+    <div id="contactModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-modal" onclick="document.getElementById('contactModal').style.display='none'">[X] CLOSE</button>
+            
+            <h2>INITIATE SIGNAL</h2>
+            <p>Connecting your technical requirements to high-performance architecture.</p>
+
+            <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted){ document.getElementById('contact-ui').style.display='none'; document.getElementById('success-ui').style.display='block'; }"></iframe>
+
+            <form id="contact-ui" action="https://docs.google.com/forms/d/e/1FAIpQLSeamk3q1EarW9HLMH1VDNsiYc_M8TyQJ9pxYRyacWDW-hzZSg/formResponse" method="POST" target="hidden_iframe" onsubmit="submitted=true;">
+                
+                <div class="input-row">
+                    <input type="text" name="entry.495394181" placeholder="Full Name" required>
+                    <input type="email" name="entry.1785825907" placeholder="Email Address" required>
+                </div>
+
+                <select name="entry.2138410864" required>
+                    <option value="" disabled selected>Select Project Scope...</option>
+                    <option value="Technical Systems & Media Pipelines">Technical Systems & Media Pipelines</option>
+                    <option value="Nodal Workflow Design & AI Frameworks">Nodal Workflow Design & AI Frameworks</option>
+                    <option value="Live Media Operations & System Engineering">Live Media Operations & System Engineering</option>
+                    <option value="Ansible Automation & Docker Infrastructure">Ansible Automation & Docker Infrastructure</option>
+                    <option value="CAD Pre-Vis & Code Execution">CAD Pre-Vis & Code Execution</option>
+                </select>
+
+                <textarea name="entry.295514517" placeholder="Project Details" rows="4" required></textarea>
+
+                <div class="timeline-wrapper">
+                    <label>Timeline / Urgency Level (1 = Flexible, 5 = Immediate)</label>
+                    <div class="radio-group">
+                        <input type="radio" id="t1" name="entry.1866891086" value="1" required><label for="t1">1</label>
+                        <input type="radio" id="t2" name="entry.1866891086" value="2"><label for="t2">2</label>
+                        <input type="radio" id="t3" name="entry.1866891086" value="3"><label for="t3">3</label>
+                        <input type="radio" id="t4" name="entry.1866891086" value="4"><label for="t4">4</label>
+                        <input type="radio" id="t5" name="entry.1866891086" value="5"><label for="t5">5</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="transmit-btn">> TRANSMIT INQUIRY</button>
+            </form>
+
+            <div id="success-ui" style="display:none; text-align:center; padding: 40px 0;">
+                <h3 style="color: #00b4d8;">[ SIGNAL RECEIVED ]</h3>
+                <p style="color: #64748b;">Your inquiry has been successfully routed to the core server.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>var submitted = false;</script>
+    <script src="./src/l4g0tt0.js" defer></script>
+</body>
+</html>

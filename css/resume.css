@@ -30,30 +30,42 @@ body {
 .nav-logo { font-weight: 900; color: var(--text-main); letter-spacing: 3px; font-size: 1.1rem; }
 .nav-logo span { color: var(--accent-gold); }
 
-.back-btn {
-    color: #000; background-color: var(--accent-gold); text-decoration: none; padding: 10px 20px;
-    font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; border-radius: 4px;
-    transition: all 0.2s ease;
+.nav-links { display: flex; gap: 30px; align-items: center; }
+
+/* FIX: Standardized nav-item class for cohesive highlighting */
+.nav-links a.nav-item {
+    color: var(--text-main); text-decoration: none; font-size: 0.85rem;
+    font-weight: 700; letter-spacing: 2px; text-transform: uppercase; transition: color 0.3s;
 }
-.back-btn:hover { background-color: #ffc333; box-shadow: 0 4px 15px rgba(255, 183, 3, 0.3); }
+.nav-links a.nav-item:hover, 
+.nav-links a.nav-item.active { 
+    color: var(--accent-teal); 
+}
+
+/* --- REFACTORED SLEEK TEAL BUTTON --- */
+.back-btn {
+    color: var(--accent-teal); background-color: rgba(0, 180, 216, 0.08); 
+    border: 1px solid var(--accent-teal); text-decoration: none; padding: 8px 16px;
+    font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; border-radius: 4px;
+    transition: all 0.3s ease; cursor: pointer;
+}
+.back-btn:hover { 
+    background-color: var(--accent-teal); color: #000; 
+    box-shadow: 0 0 15px rgba(0, 180, 216, 0.4); 
+}
 
 /* --- MASTER UI CONTAINER LAYER --- */
 .fixed-ui {
     position: fixed; top: 60px; left: 0; right: 0; width: 100%; height: calc(100vh - 60px);
     display: flex; max-width: 1800px; margin: 0 auto; z-index: 10;
-    transform: translate3d(0, 0, 0); /* Forces GPU layer caching for parent layout tree */
-    pointer-events: none; /* Allows canvas scrolls to pass through layout deadzones */
+    transform: translate3d(0, 0, 0);
+    pointer-events: none;
 }
 
-/* Shifted text column left and made it slightly narrower */
 .text-column { width: 38%; position: relative; padding: 0 4% 0 2%; height: 100%; pointer-events: auto; }
-
-/* Expanded the media column to take up the remaining space */
 .media-column { width: 62%; height: 100%; display: flex; align-items: center; justify-content: center; }
 
-/* ==========================================
-   CINEMATIC TEXT TRANSITIONS & GLASS PANE (LEFT SIDE)
-   ========================================== */
+/* CINEMATIC TEXT TRANSITIONS & GLASS PANE */
 .step {
     position: absolute; 
     top: 50%; left: 50%; 
@@ -71,7 +83,6 @@ body {
     transform: translate3d(-50%, -50%, 0) scale(0.9) skewY(2deg); 
     filter: blur(15px); pointer-events: none;
     
-    /* GPU optimization settings */
     will-change: transform, opacity, filter;
     transition: all 0.9s cubic-bezier(0.19, 1, 0.22, 1); 
 }
@@ -82,7 +93,6 @@ body {
     filter: blur(0px); pointer-events: auto; 
 }
 
-/* Typography elements */
 h1 { color: var(--accent-gold); font-size: 3rem; margin: 0 0 10px 0; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; line-height: 1.1; }
 h2 { color: var(--accent-teal); font-size: 1.35rem; margin: 0 0 20px 0; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
 p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35px 0; font-weight: 400; transition: color 0.4s ease; }
@@ -97,33 +107,27 @@ p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35
 }
 .step.is-active .tech-stack { transform: translate3d(0, 0, 0); opacity: 1; }
 
-/* --- THE HUD MEDIA STACK (RIGHT SIDE) --- */
 .media-stack {
     position: relative; 
     width: 100%; 
-    padding: 45px; /* Keeps the clean 45px glass framing border margins */
+    padding: 45px; 
     background: rgba(9, 14, 19, 0.4); 
     backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     border-radius: 12px; 
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255,255,255,0.1);
     
-    /* FIX: Tightened from 16/11 to 16/9 to strip out the excess vertical height */
     aspect-ratio: 16 / 9; 
-    
     overflow: hidden;
     pointer-events: auto;
     transform: translate3d(0, 0, 0);
 }
 
-/* Universal Media Crossfader Setup (Videos & Images) */
 .media-stack .bg-media { 
     position: absolute; 
-    /* Center the shrink-wrapped asset perfectly inside the glass frame padding */
     top: 50%; left: 50%;
     transform: translate3d(-50%, -50%, 0);
     
-    /* Inset bounds: matches the 45px padding margins seamlessly */
     max-width: calc(100% - 90px); 
     max-height: calc(100% - 90px); 
     width: auto; 
@@ -132,10 +136,9 @@ p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35
     object-fit: contain; 
     border-radius: 8px; 
     
-    /* 4-Way Alpha Feather Blend Matrix */
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%),
                         linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%);
-    -webkit-mask-composite: source-in; /* Forces webkit engines to intersect the vertical and horizontal gradients */
+    -webkit-mask-composite: source-in;
     
     mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%),
                 linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%);
@@ -145,15 +148,9 @@ p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35
     transition: opacity 0.8s ease-in-out; 
 }
 
-/* Ensure the crossfader transitions respect the centered absolute positions */
 .media-stack .active-media { opacity: 1; z-index: 2; }
 .media-stack .hidden-media { opacity: 0; z-index: 1; }
 
-/* Consolidated crossfading selectors driven cleanly by the media engine script */
-.media-stack .active-media { opacity: 1; z-index: 2; }
-.media-stack .hidden-media { opacity: 0; z-index: 1; }
-
-/* --- RESPONSIVE BACKUP VIEWPORTS --- */
 @media (max-width: 1024px) {
     .fixed-ui { flex-direction: column-reverse; }
     .text-column { width: 100%; height: 60%; }
@@ -166,9 +163,7 @@ p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35
     .media-stack .bg-media { top: 20px; left: 20px; width: calc(100% - 40px); height: calc(100% - 40px); }
 }
 
-/* ==========================================
-   CONTACT MODAL OVERLAY
-   ========================================== */
+/* CONTACT MODAL OVERLAY */
 .modal-overlay {
     position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
     background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
@@ -191,7 +186,6 @@ p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35
 .modal-content h2 { font-size: 1.8rem; margin-top: 0; margin-bottom: 10px; }
 .modal-content p { font-size: 0.95rem; margin-bottom: 25px; }
 
-/* Form Elements */
 .input-row { display: flex; gap: 15px; margin-bottom: 15px; }
 .input-row input { flex: 1; }
 
@@ -208,7 +202,6 @@ p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35
     outline: none; border-color: var(--accent-teal); background: rgba(0, 180, 216, 0.05);
 }
 
-/* Timeline Radio Buttons */
 .timeline-wrapper { margin-bottom: 25px; text-align: left; }
 .timeline-wrapper label { display: block; font-size: 0.85rem; color: var(--text-dim); margin-bottom: 10px; }
 .radio-group { display: flex; gap: 10px; justify-content: space-between; }
@@ -229,38 +222,25 @@ p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35
 }
 .transmit-btn:hover { background: var(--accent-teal); color: #000; box-shadow: 0 0 20px rgba(0, 180, 216, 0.4); }
 
-/* ========================================================
-   PRODUCTION-GRADE MOBILE OVERRIDES (SCREENS < 768px)
-   ======================================================== */
 @media (max-width: 768px) {
-    /* Prevent hardware viewport breaking */
     body {
         overflow-x: hidden !important;
     }
 
-    /* 1. LAYER COMPACT NAVBAR ITEMS */
     .top-nav {
-        height: 100px !important; /* Holds layered navigation buttons cleanly */
+        height: auto !important;
         flex-direction: column !important;
         justify-content: center !important;
-        padding: 10px !important;
-        gap: 6px !important;
+        padding: 15px 10px !important;
+        gap: 12px !important;
     }
     
-    .top-nav div[style*="display: flex"] {
+    .nav-links {
         width: 100% !important;
-        justify-content: space-between !important;
-        gap: 10px !important;
+        justify-content: center !important;
+        gap: 15px !important;
     }
 
-    .back-btn {
-        flex: 1 !important;
-        text-align: center !important;
-        padding: 8px !important;
-        font-size: 0.72rem !important;
-    }
-
-    /* 2. PRESERVE FIXED CONFIGURATIONS TO STABILIZE TRANSITION SCROLL PROGRESS */
     .fixed-ui {
         position: fixed !important;
         top: 100px !important;
@@ -268,14 +248,13 @@ p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35
         right: 0 !important;
         width: 100% !important;
         height: calc(100vh - 100px) !important;
-        flex-direction: column-reverse !important; /* Video elements on top half, text on bottom half */
+        flex-direction: column-reverse !important;
         display: flex !important;
     }
 
-    /* 3. ARRANGE GRAPHICS FRAME COLUMN (TOP HALF) */
     .media-column {
         width: 100% !important;
-        height: 45% !important; /* Holds top viewport allocation slice */
+        height: 45% !important;
         padding: 0 !important;
         display: flex !important;
         align-items: center !important;
@@ -287,41 +266,38 @@ p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35
         width: 100% !important;
         height: 100% !important;
         max-width: 100% !important;
-        padding: 15px !important; /* Framing border margins */
+        padding: 15px !important;
         border-radius: 0 !important;
         border: none !important;
         box-shadow: none !important;
-        aspect-ratio: auto !important; /* Overrides fixed desktop aspect constraint */
+        aspect-ratio: auto !important;
     }
 
-    /* FORCE ABSOLUTE CENTERING FOR RUNTIME VIDEO ASSETS */
     .media-stack .bg-media {
         position: absolute !important;
         top: 50% !important;
         left: 50% !important;
-        transform: translate3d(-50%, -50%, 0) !important; /* Clears legacy 1024px coordinate leaks */
+        transform: translate3d(-50%, -50%, 0) !important;
         width: auto !important;
         height: auto !important;
         max-width: calc(100% - 30px) !important;
         max-height: calc(100% - 30px) !important;
-        object-fit: contain !important; /* Preserves video aspect ratios perfectly */
-        -webkit-mask-image: none !important; /* Disables alpha masks for crisp mobile rendering */
+        object-fit: contain !important;
+        -webkit-mask-image: none !important;
         mask-image: none !important;
     }
 
-    /* 4. ARRANGE TEXT MODULE COLUMN (BOTTOM HALF) */
     .text-column {
         width: 100% !important;
-        height: 55% !important; /* Holds bottom tracking slice allocation */
+        height: 55% !important;
         padding: 0 !important;
     }
 
-    /* Pins active description cards cleanly inside lower viewport space */
     .step {
         position: absolute !important;
         top: 50% !important;
         left: 50% !important;
-        transform: translate3d(-50%, -50%, 0) scale(0.92) !important; /* Locks center tracking safely */
+        transform: translate3d(-50%, -50%, 0) scale(0.92) !important;
         width: 92% !important;
         max-width: 100% !important;
         padding: 24px 20px !important;
@@ -334,7 +310,6 @@ p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35
         transform: translate3d(-50%, -50%, 0) scale(1) !important;
     }
 
-    /* Responsive typography matrix */
     h1 { font-size: 1.6rem !important; }
     h2 { font-size: 1.0rem !important; }
     p { font-size: 0.85rem !important; line-height: 1.5 !important; margin-bottom: 20px !important; }
@@ -345,7 +320,6 @@ p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35
         display: inline-block !important;
     }
 
-    /* Contact modal parameters */
     .modal-content {
         width: 95% !important;
         padding: 20px !important;

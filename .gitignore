@@ -18,3 +18,9 @@ desktop.ini
 .crswap
 
 ./codebase_dump.txt
+
+./signature.html
+
+.env
+
+images\joey_sleep.png

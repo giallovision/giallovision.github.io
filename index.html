@@ -3,108 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giallovision</title>
+    <title>Giallovision | Work & Experience</title>
     <link rel="icon" type="image/png" href="favicon.png?v=2">
     <link rel="shortcut icon" href="favicon.png?v=2">
-    <link rel="stylesheet" type="text/css" href="https://unpkg.com/litegraph.js/css/litegraph.css">
-    
-    <style>
-        body {
-            background-color: #202020;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        #mycanvas {
-            width: 100vw;
-            height: 100vh;
-            display: block;
-        }
-
-        /* ========================================================
-           MOBILE CANVAS GESTURE UNLOCK (SCREENS < 768px)
-           ======================================================== */
-        @media (max-width: 768px) {
-            #mycanvas {
-                touch-action: none !important; /* Prevents mobile browser from hijacking swipes */
-            }
-        }
-
-        /* ==========================================
-           CONTACT MODAL OVERLAY (STEALTH BRIDGE)
-           ========================================== */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            display: none; align-items: center; justify-content: center; z-index: 999;
-        }
-
-        .modal-content {
-            position: relative; width: 90%; max-width: 550px;
-            background: #090e13; border: 1px solid rgba(33, 54, 77, 0.8);
-            border-radius: 8px; padding: 40px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.9), inset 0 0 20px rgba(33, 54, 77, 0.5);
-        }
-
-        .close-modal {
-            position: absolute; top: 15px; right: 20px; background: none; border: none;
-            color: #64748b; font-family: monospace; font-size: 14px; cursor: pointer; transition: color 0.2s;
-        }
-        .close-modal:hover { color: #ffb703; }
-
-        .modal-content h2 { font-size: 1.8rem; margin-top: 0; margin-bottom: 10px; color: #f8fafc; }
-        .modal-content p { font-size: 0.95rem; margin-bottom: 25px; color: #64748b; }
-
-        .input-row { display: flex; gap: 15px; margin-bottom: 15px; }
-        .input-row input { flex: 1; }
-
-        .modal-content input[type="text"], 
-        .modal-content input[type="email"], 
-        .modal-content select, 
-        .modal-content textarea {
-            width: 100%; padding: 12px; margin-bottom: 15px;
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
-            color: #f8fafc; border-radius: 4px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 0.95rem; box-sizing: border-box; transition: border-color 0.3s;
-        }
-        .modal-content input:focus, .modal-content select:focus, .modal-content textarea:focus {
-            outline: none; border-color: #00b4d8; background: rgba(0, 180, 216, 0.05);
-        }
-
-        /* --> THE FIX: Force dark background on dropdown options so white text remains visible <-- */
-        .modal-content option {
-            background-color: #090e13;
-            color: #f8fafc;
-        }
-
-        .timeline-wrapper { margin-bottom: 25px; text-align: left; }
-        .timeline-wrapper label { display: block; font-size: 0.85rem; color: #64748b; margin-bottom: 10px; }
-        .radio-group { display: flex; gap: 10px; justify-content: space-between; }
-        .radio-group input[type="radio"] { display: none; }
-        .radio-group label {
-            flex: 1; text-align: center; padding: 10px; background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; cursor: pointer; transition: all 0.2s; margin: 0;
-        }
-        .radio-group input[type="radio"]:checked + label {
-            background: #00b4d8; color: #000; font-weight: bold; border-color: #00b4d8;
-            box-shadow: 0 0 15px rgba(0, 180, 216, 0.4);
-        }
-
-        .transmit-btn {
-            width: 100%; padding: 15px; background: #21364d83; border: 1px solid #00b4d8;
-            color: #00b4d8; font-family: monospace; font-size: 1rem; font-weight: bold;
-            border-radius: 4px; cursor: pointer; transition: all 0.3s;
-        }
-        .transmit-btn:hover { background: #00b4d8; color: #000; box-shadow: 0 0 20px rgba(0, 180, 216, 0.4); }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/resume.css">
 </head>
 <body>
 
-    <canvas id="mycanvas"></canvas>
+    <canvas id="glcanvas"></canvas>
 
-    <div id="contactModal" class="modal-overlay">
+    <nav class="top-nav">
+        <div class="nav-logo">GIALLOVISION // <span>CORE</span></div>
+        <div class="nav-links">
+            <a href="/" class="nav-item">Work</a>
+            <a href="/services" class="nav-item">Services</a>
+            <a href="/nodes" class="nav-item">Nodes</a>
+            <a href="/about" class="nav-item">About</a>
+            <a href="#" class="back-btn" onclick="document.getElementById('contactModal').style.display='flex'">Contact</a>
+        </div>
+    </nav>
+
+    <div id="contactModal" class="modal-overlay" style="pointer-events: auto;">
         <div class="modal-content">
             <button class="close-modal" onclick="document.getElementById('contactModal').style.display='none'">[X] CLOSE</button>
             
@@ -153,7 +73,69 @@
     </div>
 
     <script>var submitted = false;</script>
-    <script src="https://unpkg.com/litegraph.js/build/litegraph.js"></script>
-    <script type="module" src="./src/main.js"></script>
+
+    <div class="fixed-ui">
+        <div class="text-column">
+            
+            <div class="step is-active" 
+                 data-videos="./assets/videos/GVIS-WAN1.mp4, ./assets/videos/SceneShift.mp4"
+                 data-img="">
+                <h1>Giallovision</h1>
+                <h2>10+ Years Architecting Technical Systems / Media Pipelines / Large Scale Events</h2>
+                <p>Ingraining high-performance automation into large-format experiential environments. Specializing in bridging local bare-metal system architecture, custom open-source software extensions, and real-time live video display arrays into unified visual frameworks.</p>
+                <div class="tech-stack">> INIT: DEPLOYING ANSIBLE FRAMEWORK - VRAM ALLOCATED</div>
+            </div>
+
+            <div class="step" 
+                 data-videos="./assets/videos/Diff1.mp4, ./assets/videos/Diff2.mp4, ./assets/videos/Diff3.mp4"
+                 data-img="">
+                <h2>Nodal Workflow Design & AI Frameworks</h2>
+                <p>Constructing high-efficiency generative node models utilizing localized ComfyUI environments. Designing custom automation pipelines to instantly generate, filter, and upscale high-fidelity background components bypassing legacy offline rendering workflows while maintaining exact control over latent space weights.</p>
+                <div class="tech-stack">> AI PLATFORMS: COMFYUI / KOHYA_SS / OPENWEBUI / LLM-FACTORY / ACE-STEP / CUSTOM EXTENSIONS</div>
+            </div>
+
+            <div class="step" 
+                 data-videos="./assets/videos/OrpheusBG.mp4, ./assets/videos/OrpheusAtmos.mp4"
+                 data-img="">
+                <h2>Live Media Operations / System Engineering</h2>
+                <p>Orchestrating hardware mapping arrays and software playback pipelines for high-stakes broadcast environments. Deploying real-time video canvas matrices via Resolume Arena and TouchDesigner, integrated directly into professional engineering processors including COEX VMP and Pixelhue/NovaStar control networks for rock-solid physical pixel alignment.</p>
+                <div class="tech-stack">> EVENT PLATFORMS: RESOLUME / TOUCHDESIGNER / TOUCH-OSC / NDI / COEX VMP / PIXELHUE</div>
+            </div>
+
+            <div class="step" 
+                 data-videos="./assets/videos/Jacket-WAN.mp4, ./assets/videos/ControlPose.mp4"
+                 data-img="">
+                <h2>Ansible Automation & Docker Infrastructure</h2>
+                <p>Orchestrating version-controlled bare-metal compute pools using automated Ansible playbooks for seamless configuration management and rapid node deployment. Containerizing highly specialized environments including local LLM micro-servers via Ollama, internal database engines, and custom analytics tools using raw Docker environments distributed across scaled Linux hardware and Proxmox hypervisors.</p>
+                <div class="tech-stack">> DEVOPS: ANSIBLE / DOCKER / PROXMOX / N8N / OLLAMA</div>
+            </div>
+
+            <div class="step" 
+                 data-videos="./assets/videos/LarysaAnimaAtmos.mp4, ./assets/videos/LarysaPan.mp4"
+                 data-img="./assets/images/TouchOSC.png">
+                <h2>CAD Pre-Vis & Code Execution</h2>
+                <p>Translating spatial geometry into physical execution. Developing stage rigging blueprints inside Vectorworks, establishing 3D environmental pre-visualizations in Depence, and engineering embedded controller automation sketches via C++, Python scripting, and interactive Lua arrays to manipulate physical fixtures directly via OSC.</p>
+                <div class="tech-stack">> STACK: VECTORWORKS / DEPENCE / BASH / PYTHON / LUA / C++</div>
+            </div>
+
+        </div>
+
+        <div class="media-column" id="media-anchor">
+            <div class="media-stack" id="vid-wrap">
+                <video class="bg-media active-media" id="portfolio-video-1" 
+                       muted playsinline autoplay preload="metadata"></video>
+                <video class="bg-media hidden-media" id="portfolio-video-2" 
+                       muted playsinline preload="metadata"></video>
+               
+                <img class="bg-media hidden-media" id="portfolio-img-1" alt="Generative Output">
+                <img class="bg-media hidden-media" id="portfolio-img-2" alt="Generative Output">
+            </div>
+        </div>
+    </div>
+
+    <div id="scroll-proxy"></div>
+
+    <script type="module" src="./src/portfolio_app.js"></script>
+    <script src="./src/l4g0tt0.js" defer></script>
 </body>
 </html>

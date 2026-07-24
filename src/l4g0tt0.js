@@ -195,8 +195,15 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('send-btn').addEventListener('click', sendMessage);
     chatInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
 
-    // === SOW TRANSMIT LOGIC ===
+    // === SOW TRANSMIT LOGIC WITH ANTI-SPAM LOCKS ===
+    let isSubmitting = false;
+    let sowCooldownActive = false;
+
     document.getElementById('transmit-sow-btn').addEventListener('click', () => {
+        if (sowCooldownActive) {
+            alert("Transcript already transmitted. Please wait before sending again.");
+            return;
+        }
         // Swap inputs
         standardInputArea.style.display = 'none';
         emailCaptureArea.style.display = 'flex';
@@ -205,8 +212,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     async function submitTranscript() {
+        // 1. Guard against rapid multi-clicking
+        if (isSubmitting) return;
+
         const email = sowEmailInput.value.trim();
         if (!email || !email.includes('@')) return alert("Invalid signal origin. Provide a valid email.");
+
+        const sendBtn = document.getElementById('send-sow-btn');
+
+        // 2. Lock UI state
+        isSubmitting = true;
+        sendBtn.disabled = true;
+        sendBtn.innerText = "...";
 
         // Scrape current chat for the payload
         let transcript = "";
@@ -225,11 +242,11 @@ document.addEventListener("DOMContentLoaded", () => {
             urgency: "3"
         };
 
-        document.getElementById('send-sow-btn').innerText = "...";
-
         try {
-            // Note: Update to '/api/contact' if routing through your worker, or use absolute URL
-            await fetch('/api/contact', {
+            // Uses your WORKER_URL variable to guarantee proper routing
+            const targetUrl = WORKER_URL.endsWith('/') ? `${WORKER_URL}api/contact` : `${WORKER_URL}/api/contact`;
+            
+            await fetch(targetUrl, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
@@ -237,18 +254,25 @@ document.addEventListener("DOMContentLoaded", () => {
             
             appendMessage("[SYSTEM] Transcript successfully dispatched to Joseph. Awaiting further directives.", 'msg-system');
             
+            // 3. Trigger 60-second cooldown on success
+            sowCooldownActive = true;
+            setTimeout(() => { sowCooldownActive = false; }, 60000);
+
             // Revert UI
             emailCaptureArea.style.display = 'none';
             standardInputArea.style.display = 'flex';
             sowEmailInput.value = "";
-            document.getElementById('send-sow-btn').innerText = "SEND";
             
         } catch (err) {
             alert("[ERR] Transmission failed.");
-            document.getElementById('send-sow-btn').innerText = "SEND";
+        } finally {
+            // 4. Unlock state whether successful or failed
+            isSubmitting = false;
+            sendBtn.disabled = false;
+            sendBtn.innerText = "SEND";
         }
     }
 
     document.getElementById('send-sow-btn').addEventListener('click', submitTranscript);
     sowEmailInput.addEventListener('keypress', e => { if (e.key === 'Enter') submitTranscript(); });
-});
+}); // Ends DOMContentLoaded

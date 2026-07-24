@@ -32,7 +32,6 @@ body {
 
 .nav-links { display: flex; gap: 30px; align-items: center; }
 
-/* FIX: Standardized nav-item class for cohesive highlighting */
 .nav-links a.nav-item {
     color: var(--text-main); text-decoration: none; font-size: 0.85rem;
     font-weight: 700; letter-spacing: 2px; text-transform: uppercase; transition: color 0.3s;
@@ -200,6 +199,15 @@ p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35
 }
 .modal-content input:focus, .modal-content select:focus, .modal-content textarea:focus {
     outline: none; border-color: var(--accent-teal); background: rgba(0, 180, 216, 0.05);
+}
+
+/* FIX: Native Select Dropdown Option Highlighting */
+.modal-content select option {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+}
+.modal-content select option[disabled] {
+    color: var(--text-dim);
 }
 
 .timeline-wrapper { margin-bottom: 25px; text-align: left; }

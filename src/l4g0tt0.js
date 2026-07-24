@@ -82,6 +82,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         .typing { font-family: monospace; color: #64748b; font-size: 0.8rem; border-left: 2px solid #64748b; }
 
+        .chat-disclaimer {
+            font-size: 0.7rem; color: #64748b; text-align: center; padding: 8px;
+            background: rgba(0,0,0,0.6); border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
         @media (max-width: 768px) {
             #gvis-chat-container { width: calc(100% - 40px); right: 20px; bottom: 80px; height: 60vh; }
             #gvis-chat-container.expanded { width: calc(100% - 40px) !important; height: 85vh !important; right: 20px !important; bottom: 20px !important; }
@@ -123,6 +128,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 </select>
                 <button id="send-sow-btn">TRANSMIT TRANSCRIPT</button>
                 <button id="cancel-sow-btn">Cancel Transmission</button>
+            </div>
+            
+            <!-- Disclaimer Footer -->
+            <div class="chat-disclaimer">
+                Your chats aren't used to improve our models. L4G0TT0 is AI and can make mistakes.
             </div>
         </div>
     `;

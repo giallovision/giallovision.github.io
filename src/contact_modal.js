@@ -174,8 +174,10 @@
                 urgency: form.querySelector('[name="urgency"]:checked')?.value || "1"
             };
 
+            const WORKER_URL = "https://gvis-l4g0.joseph-giallombardo.workers.dev/api/contact";
+
             try {
-                const response = await fetch('/api/contact', {
+                const response = await fetch(WORKER_URL, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)

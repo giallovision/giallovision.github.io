@@ -1,0 +1,42 @@
+name: Deploy to GitHub Pages with Cache-Buster
+
+on:
+  push:
+    branches: ["main"] # Change this if your default branch is "master"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Inject Cache-Buster
+        run: |
+          # Finds all HTML files and replaces ANY v= number with the current GitHub Run ID
+          find . -type f -name "*.html" -exec sed -i -E 's/l4g0tt0\.js\?v=[0-9]+/l4g0tt0.js?v=${{ github.run_id }}/g' {} +
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

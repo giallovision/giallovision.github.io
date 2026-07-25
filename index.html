@@ -87,6 +87,70 @@
 
     <div id="scroll-proxy"></div>
 
+    <!-- VIDEO STREAM WATCHDOG & AUTO-HEALER -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const v1 = document.getElementById('portfolio-video-1');
+            const v2 = document.getElementById('portfolio-video-2');
+            const recycledVideos = [v1, v2].filter(Boolean);
+
+            recycledVideos.forEach(video => {
+                // Force strict background loop settings
+                video.muted = true;
+                video.playsInline = true;
+                video.loop = true;
+
+                // 1. Safe Play Wrapper (Prevents AbortError / Unhandled Rejection freezes)
+                const safePlay = async () => {
+                    if (!video.src) return;
+                    try {
+                        await video.play();
+                    } catch (err) {
+                        // Ignored: Src changed mid-flight or user hasn't interacted yet
+                        setTimeout(() => {
+                            if (video.src && video.paused) video.play().catch(() => {});
+                        }, 200);
+                    }
+                };
+
+                // 2. Network Stall Recovery
+                video.addEventListener('stalled', () => {
+                    if (video.src && video.paused) {
+                        video.load();
+                        safePlay();
+                    }
+                });
+
+                // 3. Buffer Freeze Recovery
+                video.addEventListener('waiting', () => {
+                    setTimeout(() => {
+                        if (video.readyState < 3 && video.src) {
+                            safePlay();
+                        }
+                    }, 1500);
+                });
+
+                // 4. Fatal Error Auto-Reload
+                video.addEventListener('error', () => {
+                    setTimeout(() => {
+                        if (video.src) {
+                            video.load();
+                            safePlay();
+                        }
+                    }, 1000);
+                });
+
+                // 5. Hard Loop Fallback (In case native browser loop drops frame 0)
+                video.addEventListener('ended', () => {
+                    video.currentTime = 0;
+                    safePlay();
+                });
+            });
+        });
+    </script>
+
+    <script type="module" src="./src/portfolio_app.js"></script>
+
     <script type="module" src="./src/portfolio_app.js"></script>
     <script src="./src/contact_modal.js" defer></script>
     <script src="./src/l4g0tt0.js?v=3" defer></script>

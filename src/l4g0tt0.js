@@ -207,16 +207,29 @@ document.addEventListener("DOMContentLoaded", () => {
         const typingId = 'typing-' + Date.now();
         appendMessage('> Thinking...', 'msg-ai typing', typingId, false);
 
+        // Check cooldown state (120,000ms = 2 minutes)
+        const lastTrigger = sessionStorage.getItem('sow_last_trigger') || 0;
+        const isCooldownActive = (Date.now() - lastTrigger) < 120000;
+
         try {
             const response = await fetch(WORKER_URL + "api/chat", {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: text })
+                body: JSON.stringify({ 
+                    message: text,
+                    sowCooldownActive: isCooldownActive
+                })
             });
             const data = await response.json();
             document.getElementById(typingId)?.remove();
             
-            if (data.reply) appendMessage(data.reply, 'msg-ai');
+            if (data.reply) {
+                appendMessage(data.reply, 'msg-ai');
+                // Lock the cooldown if the dictionary triggered
+                if (data.triggeredSOW) {
+                    sessionStorage.setItem('sow_last_trigger', Date.now());
+                }
+            }
             else if (data.error) appendMessage(`[ERR] ${data.error}`, 'msg-ai');
         } catch (err) {
             document.getElementById(typingId)?.remove();

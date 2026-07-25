@@ -223,10 +223,11 @@
 
             <div class="profile-card">
                 <div class="profile-media">
-                    <!-- Injected poster attribute and internal fallback image -->
-                    <video autoplay muted loop playsinline poster="./assets/images/Orpheus2.png">
-                        <source src="./assets/videos/L4g0tt0_Core.mp4" type="video/mp4">
-                        <img src="./assets/images/Orpheus2.png" alt="L4G0TT0 - Offline">
+                    <!-- 'poster' displays frame 81 while loading or if playback is blocked -->
+                    <video autoplay muted playsinline poster="./images/L4g0tt0_poster.png">
+                        <source src="./videos/L4g0tt0_reel.mp4" type="video/mp4">
+                        <!-- Ultimate fallback image if HTML5 video is disabled entirely -->
+                        <img src="./images/L4g0tt0_poster.png" alt="L4G0TT0 - Offline">
                     </video>
                 </div>
                 <div class="profile-info">

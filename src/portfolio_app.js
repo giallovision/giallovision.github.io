@@ -88,49 +88,54 @@ const fsSource = `
     }
 
     // ==========================================
-    // SCENE 1: Deep Amber / Turquoise Warp
+    // SCENE 1: Fiery Amber / Pure Liquid Gold (Olive-Green Purged)
     // ==========================================
     vec3 scene1(vec2 p, float time, float scroll) {
-        p.y -= time * 0.06 + scroll; 
+        p.y -= time * 0.05 + scroll; 
         vec2 q = vec2( fbm( p + vec2(1.0, 2.0) ), fbm( p + vec2(3.2,4.3) ) );
         vec2 r = vec2( fbm( p + 3.0*q + vec2(2.7,1.2) + time*0.08 ), fbm( p + 3.0*q + vec2(5.3,6.8) - time*0.06 ) );
         float f = fbm( p + 5.0*r );
         
-        vec3 colBase = vec3(0.1, 0.06, 0.03);     
-        vec3 colMid = vec3(0.35, 0.22, 0.12);      
-        vec3 colGold = vec3(1.0, 0.65, 0.3);     
-        vec3 colHighlight = vec3(0.1, 0.95, 0.90);  
+        // Tightly restrained Green channel to eliminate olive/mud tones completely
+        vec3 colBase = vec3(0.03, 0.01, 0.005);    // Obsidian obsidian-amber dark
+        vec3 colMid = vec3(0.92, 0.32, 0.02);     // Deep fiery burnt orange / amber
+        vec3 colGold = vec3(1.0, 0.58, 0.08);     // Radiant warm gold
+        vec3 colHighlight = vec3(1.0, 0.85, 0.4); // Hot golden white core
         
-        vec3 col = mix(colBase, colMid, clamp(f*2.0, 0.0, 1.0));
+        vec3 col = mix(colBase, colMid, clamp(f*2.2, 0.0, 1.0));
         col = mix(col, colGold, clamp(length(q) * 1.5, 0.0, 1.0));
-        col = mix(col, colHighlight, clamp(length(r.x), 0.0, 1.0) * f * f * 4.2);
+        col += colHighlight * clamp(length(r.x), 0.0, 1.0) * f * f * 4.0;
         return col;
     }
 
     // ==========================================
-    // SCENE 2: Turquoise Reaction-Diffusion 
+    // SCENE 2: Broad Turquoise Reaction-Diffusion (Scaled Large)
     // ==========================================
     vec3 scene2(vec2 p, float time, float scroll) {
-        p.y -= time * 0.03 + scroll * 0.5; 
-        vec2 q = vec2(fbm(p) * 0.1, fbm(p + 4.2 * vec2(42., 1.3)));
-        float n = fbm(p * 0.5 + 4.0 * q + time * 0.025);
+        // 1. Scale down spatial coordinates (0.45) to widen all visual elements
+        vec2 st = p * 0.45;
+        st.y -= time * 0.02 + scroll * 0.3; 
         
-        float rd = sin(n * 63.0 - time * 0.8);
-        float glow = smoothstep(0.8, 0.0, abs(rd));
-        float core = smoothstep(0.1, 0.0, abs(rd));
+        vec2 q = vec2(fbm(st) * 0.15, fbm(st + 3.0 * vec2(12.0, 1.3)));
+        float n = fbm(st * 0.6 + 2.5 * q + time * 0.02);
         
-        vec3 colBase = vec3(0.01, 0.03, 0.05);   
-        vec3 colMid = vec3(0.0, 0.35, 0.55);       
-        vec3 colHighlight = vec3(0.1, 0.85, 0.95); 
+        // 2. Reduced frequency multiplier (from 63.0 down to 22.0) for sweeping lines
+        float rd = sin(n * 22.0 - time * 0.6);
+        float glow = smoothstep(0.75, 0.0, abs(rd));
+        float core = smoothstep(0.15, 0.0, abs(rd));
         
-        vec3 col = mix(colBase, colMid, fbm(p + q));
-        col += colMid * glow * 1.5;
-        col += colHighlight * core * 2.1; 
+        vec3 colBase = vec3(0.01, 0.03, 0.06);   
+        vec3 colMid = vec3(0.0, 0.45, 0.65);       // Deep electric teal
+        vec3 colHighlight = vec3(0.2, 0.9, 1.0);  // High-contrast turquoise core
+        
+        vec3 col = mix(colBase, colMid, fbm(st + q));
+        col += colMid * glow * 1.4;
+        col += colHighlight * core * 2.0; 
         return col;
     }
 
     // ==========================================
-    // SCENE 3: Viscous Fluid Sim 
+    // SCENE 3: Viscous Fluid Sim (Rich Amber & Burnished Gold)
     // ==========================================
     vec3 scene3(vec2 p, float time, float scroll) {
         p.y -= scroll * 0.5;
@@ -142,132 +147,92 @@ const fsSource = `
         }
         float n = noise(q * 2.0 + time * 0.1);
         
-        vec3 colBase = vec3(0.01, 0.03, 0.05);
-        vec3 colMid = vec3(0.0, 0.4, 0.6); 
-        vec3 colGold = vec3(0.9, 0.65, 0.1); 
+        vec3 colBase = vec3(0.03, 0.015, 0.005);   // Dark bronze abyss
+        vec3 colMid = vec3(0.9, 0.42, 0.05);       // Rich glowing amber
+        vec3 colGold = vec3(1.0, 0.82, 0.22);      // Brilliant polished gold
         
-        vec3 col = mix(colBase, colMid, smoothstep(0.0, 0.8, n));
-        col = mix(col, colGold, smoothstep(0.65, 1.0, n) * 1.5);
+        vec3 col = mix(colBase, colMid, smoothstep(0.0, 0.75, n));
+        col = mix(col, colGold, smoothstep(0.55, 1.0, n) * 1.8);
         
         float spec = pow(max(0.0, sin(q.x * 4.0) * cos(q.y * 4.0)), 6.0);
-        col += vec3(0.8, 0.95, 1.0) * spec * 0.6; 
+        col += vec3(1.0, 0.92, 0.65) * spec * 0.8; // Incandescent specular
         return col;
     }
 
     // ==========================================
-    // SCENE 4: ABSTRACT GLASSY FIELD (90% Blue, 5% Teal, 5% Gold)
+    // SCENE 4: TRANSLUCENT GYROID CAVE (Giallovision Palette)
     // ==========================================
-    float g_accum = 0.0; 
-
-    vec3 camPath(float t) {
-        float a = sin(t * 0.11);
-        float b = cos(t * 0.14);
-        return vec3(a * 4.0 - b * 1.5, b * 1.7 + a * 1.5, t);
+    float gGyroid(vec4 p, float s) {
+        p *= s;
+        return abs(dot(sin(p), cos(p.zxwy)) - 1.0) / s;
     }
 
-    float mapGlass(vec3 p) {
-        p.xy -= camPath(p.z).xy; 
-        p = cos(mod(p * 0.315 * 1.25 + sin(mod(p.zxy * 0.875 * 1.25, 6.2831853)), 6.2831853));
-        return (length(p) - 1.025) * 1.33;
+    // Polyfill for WebGL 1.0 tone mapping
+    vec3 tanhApprox(vec3 x) {
+        vec3 e2x = exp(clamp(2.0 * x, -15.0, 15.0));
+        return (e2x - 1.0) / (e2x + 1.0);
     }
 
-    float caoGlass(vec3 p, vec3 n) {
-        float sca = 1.0, occ = 0.0;
-        for(int i = 0; i < 5; i++) {
-            float fi = float(i);
-            float hr = 0.01 + fi * 0.35 / 4.0;
-            float dd = mapGlass(n * hr + p);
-            occ += (hr - dd) * sca;
-            sca *= 0.7;
-        }
-        return clamp(1.0 - occ, 0.0, 1.0);
-    }
+    vec3 scene4(vec2 p_in, float time, float scroll) {
+        // Slow time clock & scroll integration
+        float T = time * 0.4 + scroll * 1.2;
 
-    vec3 nrGlass(vec3 p) {
-        vec2 e = vec2(0.002, 0.0);
-        return normalize(vec3(
-            mapGlass(p + e.xyy) - mapGlass(p - e.xyy),
-            mapGlass(p + e.yxy) - mapGlass(p - e.yxy),
-            mapGlass(p + e.yyx) - mapGlass(p - e.yyx)
-        ));
-    }
+        vec4 accum = vec4(0.0);
+        vec4 q = vec4(0.0);
+        float z = 0.1;
+        float s = 0.0;
 
-    float traceGlass(vec3 ro, vec3 rd) {
-        g_accum = 0.0;
-        float t = 0.0, h;
-        for(int i = 0; i < 80; i++) {
-            h = mapGlass(ro + rd * t);
-            if(abs(h) < 0.001 * (t * 0.25 + 1.0) || t > 50.0) break;
-            t += h; 
-            if(abs(h) < 0.35) g_accum += (0.35 - abs(h)) / 24.0;
-        }
-        return min(t, 50.0);
-    }
+        // Constants vector: U = vec4(2, 1, 0, 3)
+        vec4 U = vec4(2.0, 1.0, 0.0, 3.0);
 
-    vec3 scene4(vec2 p, float time, float scroll) {
-        vec2 u = p * 0.25; 
-        float speed = 1.2; 
-        float tTime = time * speed + scroll * 4.0;
+        // Volumetric Gyroid Raymarch
+        for (int i = 0; i < 45; i++) {
+            // Ray direction scaled by depth
+            q = vec4(normalize(vec3(p_in * 0.45, 1.0)) * z, 0.2);
+            q.z += T * 0.08; // Smooth motion through the cave
 
-        vec3 o = camPath(tTime);
-        vec3 lk = camPath(tTime + 0.25); 
-        vec3 l = camPath(tTime + 2.0) + vec3(0.0, 1.0, 0.0); 
+            s = q.y + 0.1;
+            q.y = abs(s); // Water surface reflection fold
 
-        vec3 fwd = normalize(lk - o);
-        vec3 rgt = normalize(vec3(fwd.z, 0.0, -fwd.x));
-        vec3 up = cross(fwd, rgt);
+            vec4 p = q;
+            p.y -= 0.11;
 
-        float FOV = 2.1; 
-        vec3 r = fwd + FOV * (u.x * rgt + u.y * up);
-        r = normalize(vec3(r.xy, r.z - length(r.xy) * 0.125));
+            // Twist cave walls using GLSL rotation matrix
+            vec4 rotAngle = 11.0 * U.zywz - 2.0 * p.z;
+            mat2 rotMat = mat2(cos(rotAngle.x), cos(rotAngle.y), cos(rotAngle.z), cos(rotAngle.w));
+            p.xy *= rotMat;
+            p.y -= 0.2;
 
-        float t = traceGlass(o, r);
-        vec3 col = vec3(0.0); 
+            // Dual-scale Gyroid distance estimation
+            float d = abs(gGyroid(p, 8.0) - gGyroid(p, 24.0)) / 4.0;
 
-        if(t < 50.0) {
-            vec3 sp_p = o + r * t; 
-            vec3 n = nrGlass(sp_p); 
-            vec3 svn = n;
+            // COLOR PALETTE MODULATION (Shifts between Teal/Navy and Amber/Gold)
+            float phase = sin(0.5 * q.z + T * 0.25) * 0.5 + 0.5;
 
-            vec3 lDir = l - sp_p;
-            float d = max(length(lDir), 0.001);
-            lDir /= d;
-            float at = 1.0 / (1.0 + d * 0.05 + d * d * 0.0125);
-            float ao = caoGlass(sp_p, n);
+            vec3 tealNavy  = mix(vec3(0.01, 0.08, 0.22), vec3(0.0, 0.82, 0.95), cos(0.7 * 2.0 + 5.0 * q.z) * 0.5 + 0.5);
+            vec3 amberGold = mix(vec3(0.12, 0.04, 0.01), vec3(1.0, 0.68, 0.14), sin(0.7 * 1.0 + 5.0 * q.z) * 0.5 + 0.5);
 
-            float di = max(dot(lDir, n), 0.0);
-            float sp = pow(max(dot(reflect(r, n), lDir), 0.0), 64.0);
-            float fr = clamp(1.0 + dot(r, n), 0.0, 1.0);
+            vec3 glowColor = mix(tealNavy, amberGold, phase);
+            float pw = 1.0 + cos(0.7 * 3.0 + 5.0 * q.z); // Intensity multiplier
 
-            // [90% DOMINANT BLUE]
-            vec3 tx = vec3(0.01, 0.04, 0.18); 
-            col = tx * (di * 0.1 + ao * 0.25) + vec3(0.0, 0.5, 1.0) * sp * 1.5 + vec3(0.0, 0.8, 1.0) * pow(fr, 4.0) * 0.1;
+            float factor = (s > 0.0 ? 1.0 : 0.1);
+            float denom = max(s > 0.0 ? d : d * d * d, 0.0005);
 
-            vec3 reflVec = normalize(reflect(r, svn * 0.5 + n * 0.5));
-            vec3 refrVec = normalize(refract(r, svn * 0.5 + n * 0.5, 1.0 / 1.35));
+            accum += factor * pw * vec4(glowColor, 1.0) / denom;
 
-            vec3 envRefl = mix(vec3(0.01, 0.1, 0.6), vec3(0.0, 0.6, 0.9), smoothstep(-1.0, 1.0, reflVec.y + reflVec.x));
-            vec3 envRefr = mix(vec3(0.01, 0.15, 0.7), vec3(0.0, 0.7, 1.0), smoothstep(-1.0, 1.0, refrVec.y + refrVec.x));
-
-            vec3 refCol = mix(envRefr, envRefl, pow(fr, 5.0));
-            col += refCol * ((di * di * 0.25 + 0.75) + ao * 0.25) * 1.5;
-            col *= (di * 0.85 + 0.15); 
-
-            // [5% TEAL WEIGHT GLOW]
-            vec3 glowCol = mix(vec3(0.0, 0.3, 0.8), vec3(0.0, 0.85, 0.95), smoothstep(0.0, 0.8, g_accum));
-            col += col * glowCol * g_accum * 8.0;
-
-            // [5% AMBER ARCS]
-            float hi = abs(mod(t + tTime * 0.5, 8.0) - 4.0) * 2.0;
-            vec3 cCol = mix(vec3(0.0, 0.6, 1.0), vec3(1.0, 0.65, 0.1), fbm(sp_p.xy * 2.0));
-            col += cCol * col * 1.0 / (0.001 + hi * hi * 0.2);
-
-            col *= ao * at; 
+            z += d + 0.001;
+            if (accum.a > 1e5) break;
         }
 
-        vec3 fog = vec3(0.01, 0.03, 0.15); 
-        col = mix(col, fog, smoothstep(0.0, 0.95, t / 50.0));
-        return col;
+        // Central tunnel wisp pulse (Cycles between Electric Cyan and Hot Amber)
+        float wispPulse = (1.4 + sin(T * 1.5) * sin(2.55 * T) * sin(3.45 * T));
+        vec3 wispCol = mix(vec3(0.0, 0.85, 1.0), vec3(1.0, 0.72, 0.18), sin(T * 0.5) * 0.5 + 0.5);
+        accum.rgb += wispPulse * 750.0 * wispCol / max(length(q.xy), 0.01);
+
+        // Soft tone mapping to prevent harsh color blowout
+        vec3 finalCol = tanhApprox(accum.rgb / 1E5);
+
+        return clamp(finalCol, 0.0, 1.0);
     }
 
     vec3 getScene(int id, vec2 p, float time, float scroll) {

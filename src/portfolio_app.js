@@ -160,79 +160,67 @@ const fsSource = `
     }
 
     // ==========================================
-    // SCENE 4: TRANSLUCENT GYROID CAVE (Giallovision Palette)
+    // SCENE 4: TRANSLUCENT GYROID CAVE (High-Contrast & Dark Void)
     // ==========================================
-    float gGyroid(vec4 p, float s) {
-        p *= s;
-        return abs(dot(sin(p), cos(p.zxwy)) - 1.0) / s;
+    mat2 rot2D(float a) {
+        float c = cos(a), s = sin(a);
+        return mat2(c, s, -s, c);
     }
 
-    // Polyfill for WebGL 1.0 tone mapping
-    vec3 tanhApprox(vec3 x) {
-        vec3 e2x = exp(clamp(2.0 * x, -15.0, 15.0));
-        return (e2x - 1.0) / (e2x + 1.0);
+    float gyroid3D(vec3 p, float s) {
+        p *= s;
+        return abs(dot(sin(p), cos(p.zxy))) / s;
     }
 
     vec3 scene4(vec2 p_in, float time, float scroll) {
-        // Slow time clock & scroll integration
-        float T = time * 0.4 + scroll * 1.2;
+        vec2 st = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / u_resolution.y;
+        vec3 rayDir = normalize(vec3(st * 1.35, 1.0));
 
-        vec4 accum = vec4(0.0);
-        vec4 q = vec4(0.0);
-        float z = 0.1;
-        float s = 0.0;
+        float T = time * 0.35 + scroll * 1.0;
+        
+        // Deep Obsidian / Navy Base Void
+        vec3 accum = vec3(0.005, 0.012, 0.025);
+        float z = 0.25;
 
-        // Constants vector: U = vec4(2, 1, 0, 3)
-        vec4 U = vec4(2.0, 1.0, 0.0, 3.0);
+        for (int i = 0; i < 24; i++) {
+            vec3 p = rayDir * z;
+            p.z += T * 0.08;
+            
+            float s_val = p.y + 0.12;
+            p.y = abs(s_val) - 0.1;
 
-        // Volumetric Gyroid Raymarch
-        for (int i = 0; i < 45; i++) {
-            // Ray direction scaled by depth
-            q = vec4(normalize(vec3(p_in * 0.45, 1.0)) * z, 0.2);
-            q.z += T * 0.08; // Smooth motion through the cave
+            p.xy *= rot2D(-2.0 * p.z + 1.5);
+            p.y -= 0.15;
 
-            s = q.y + 0.1;
-            q.y = abs(s); // Water surface reflection fold
+            float d = gyroid3D(p, 7.0) * 0.5;
 
-            vec4 p = q;
-            p.y -= 0.11;
-
-            // Twist cave walls using GLSL rotation matrix
-            vec4 rotAngle = 11.0 * U.zywz - 2.0 * p.z;
-            mat2 rotMat = mat2(cos(rotAngle.x), cos(rotAngle.y), cos(rotAngle.z), cos(rotAngle.w));
-            p.xy *= rotMat;
-            p.y -= 0.2;
-
-            // Dual-scale Gyroid distance estimation
-            float d = abs(gGyroid(p, 8.0) - gGyroid(p, 24.0)) / 4.0;
-
-            // COLOR PALETTE MODULATION (Shifts between Teal/Navy and Amber/Gold)
-            float phase = sin(0.5 * q.z + T * 0.25) * 0.5 + 0.5;
-
-            vec3 tealNavy  = mix(vec3(0.01, 0.08, 0.22), vec3(0.0, 0.82, 0.95), cos(0.7 * 2.0 + 5.0 * q.z) * 0.5 + 0.5);
-            vec3 amberGold = mix(vec3(0.12, 0.04, 0.01), vec3(1.0, 0.68, 0.14), sin(0.7 * 1.0 + 5.0 * q.z) * 0.5 + 0.5);
-
+            float phase = sin(0.4 * p.z + T * 0.25) * 0.5 + 0.5;
+            
+            // Vibrant Giallovision Colors
+            vec3 tealNavy  = vec3(0.0, 0.70, 0.90);
+            vec3 amberGold = vec3(1.0, 0.50, 0.08);
             vec3 glowColor = mix(tealNavy, amberGold, phase);
-            float pw = 1.0 + cos(0.7 * 3.0 + 5.0 * q.z); // Intensity multiplier
+            
+            float factor = (s_val > 0.0 ? 1.0 : 0.12);
+            // Raised floor (0.012) prevents division-by-zero whiteout explosions
+            float denom = max(s_val > 0.0 ? d : d * d * d, 0.012);
+            
+            // Tamed accumulation intensity
+            accum += factor * glowColor * (0.0022 / denom);
 
-            float factor = (s > 0.0 ? 1.0 : 0.1);
-            float denom = max(s > 0.0 ? d : d * d * d, 0.0005);
-
-            accum += factor * pw * vec4(glowColor, 1.0) / denom;
-
-            z += d + 0.001;
-            if (accum.a > 1e5) break;
+            z += d + 0.012; 
         }
 
-        // Central tunnel wisp pulse (Cycles between Electric Cyan and Hot Amber)
-        float wispPulse = (1.4 + sin(T * 1.5) * sin(2.55 * T) * sin(3.45 * T));
-        vec3 wispCol = mix(vec3(0.0, 0.85, 1.0), vec3(1.0, 0.72, 0.18), sin(T * 0.5) * 0.5 + 0.5);
-        accum.rgb += wispPulse * 750.0 * wispCol / max(length(q.xy), 0.01);
+        // Central Wisp Accent
+        float wispPulse = (1.2 + sin(T * 1.2) * sin(2.1 * T));
+        vec3 wispCol = mix(vec3(0.0, 0.75, 0.95), vec3(1.0, 0.55, 0.10), sin(T * 0.4) * 0.5 + 0.5);
+        accum += wispPulse * 0.02 * wispCol / max(length(st), 0.15);
 
-        // Soft tone mapping to prevent harsh color blowout
-        vec3 finalCol = tanhApprox(accum.rgb / 1E5);
-
-        return clamp(finalCol, 0.0, 1.0);
+        // Tone Map + Steep Contrast Curve (Keeps darks pitch black)
+        vec3 col = accum / (accum + 0.75);
+        col = pow(col, vec3(1.65)); 
+        
+        return clamp(col, 0.0, 1.0);
     }
 
     vec3 getScene(int id, vec2 p, float time, float scroll) {

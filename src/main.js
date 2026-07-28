@@ -172,61 +172,91 @@ window.addEventListener("resize", updateCanvasResolution);
 updateCanvasResolution(); // Initializes operational boundaries on boot
 graph.start();
 
-// ========================================================
-// DIRECT-INJECTION MOBILE TOUCH DRAG ENGINE
-// ========================================================
-if (window.innerWidth < 768) {
+// =========================================================
+// DIRECT-INJECTION MOBILE TOUCH DRAG & ZOOM ENGINE
+// =========================================================
+if (window.innerWidth < 1024) {
     let lastTouchX = 0;
     let lastTouchY = 0;
+    let initialPinchDist = null;
+    let initialScale = 1;
 
     canvasEl.addEventListener('touchstart', (e) => {
         if (e.touches.length === 1) {
             lastTouchX = e.touches[0].clientX;
             lastTouchY = e.touches[0].clientY;
             
-            // Forwards a mousedown initialization to handle node actions/clicks cleanly
             const touch = e.touches[0];
             const mousedownEvent = new MouseEvent('mousedown', {
                 clientX: touch.clientX,
                 clientY: touch.clientY,
-                bubbles: true,
-                cancelable: true,
-                button: 0,
-                buttons: 1
+                bubbles: true, cancelable: true, button: 0, buttons: 1
             });
             canvasEl.dispatchEvent(mousedownEvent);
+        } 
+        // --- PINCH INIT ---
+        else if (e.touches.length === 2) {
+            initialPinchDist = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+            initialScale = canvas.ds.scale; // Store the scale at the start of the pinch
         }
     }, { passive: false });
 
     canvasEl.addEventListener('touchmove', (e) => {
-        e.preventDefault(); // Locks mobile overscroll window bouncing completely
+        e.preventDefault(); 
         
-        if (e.touches.length === 1) {
+        // --- 1-FINGER PAN ---
+        if (e.touches.length === 1 && !initialPinchDist) {
             const currentX = e.touches[0].clientX;
             const currentY = e.touches[0].clientY;
             
-            // Extract displacement deltas from touch movements
             const deltaX = currentX - lastTouchX;
             const deltaY = currentY - lastTouchY;
             
-            // Map offsets directly into LiteGraph's matrix transform registers
             canvas.ds.offset[0] += deltaX;
             canvas.ds.offset[1] += deltaY;
             
             lastTouchX = currentX;
             lastTouchY = currentY;
             
-            canvas.setDirty(true, true); // Force immediate canvas repaint loop
+            canvas.setDirty(true, true); 
+        } 
+        // --- 2-FINGER ZOOM ---
+        else if (e.touches.length === 2 && initialPinchDist) {
+            const currentDist = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+            
+            const scaleFactor = currentDist / initialPinchDist;
+            
+            // Clamp the zoom scale so they can't zoom in/out too far
+            const newScale = Math.min(Math.max(initialScale * scaleFactor, 0.25), 2.0);
+            
+            canvas.ds.scale = newScale;
+            canvas.setDirty(true, true);
         }
     }, { passive: false });
 
     canvasEl.addEventListener('touchend', (e) => {
-        const mouseupEvent = new MouseEvent('mouseup', {
-            bubbles: true,
-            cancelable: true,
-            button: 0,
-            buttons: 0
-        });
-        canvasEl.dispatchEvent(mouseupEvent);
+        // Reset pinch state if a finger is lifted
+        if (e.touches.length < 2) {
+            initialPinchDist = null;
+        }
+        
+        if (e.touches.length === 0) {
+            const mouseupEvent = new MouseEvent('mouseup', {
+                bubbles: true, cancelable: true, button: 0, buttons: 0
+            });
+            canvasEl.dispatchEvent(mouseupEvent);
+        }
     }, { passive: false });
 }
+
+// Expose a global zoom function for the +/- UI buttons
+window.zoomCanvas = function(factor) {
+    canvas.ds.scale = Math.min(Math.max(canvas.ds.scale * factor, 0.25), 2.0);
+    canvas.setDirty(true, true);
+};

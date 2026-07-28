@@ -138,8 +138,19 @@ p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35
         height: calc(100vh - 60px) !important;
     }
     .media-column { height: 45% !important; padding: 0 !important; }
-    .media-stack { padding: 15px !important; aspect-ratio: auto !important; }
+    .media-stack { 
+        width: 100% !important;
+        height: 100% !important;
+        padding: 15px !important; 
+        border-radius: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        aspect-ratio: auto !important; 
+    }
+    
     .media-stack .bg-media {
+        width: auto !important;
+        height: auto !important;
         max-width: calc(100% - 30px) !important;
         max-height: calc(100% - 30px) !important;
         -webkit-mask-image: none !important;

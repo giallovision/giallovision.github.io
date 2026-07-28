@@ -260,10 +260,14 @@ window.addEventListener("resize", updateCanvasResolution);
 updateCanvasResolution(); 
 graph.start();
 
-// DIRECT-INJECTION MOBILE TOUCH DRAG ENGINE
+// =========================================================
+// DIRECT-INJECTION MOBILE TOUCH DRAG & ZOOM ENGINE
+// =========================================================
 if (window.innerWidth < 1024) {
     let lastTouchX = 0;
     let lastTouchY = 0;
+    let initialPinchDist = null;
+    let initialScale = 1;
 
     canvasEl.addEventListener('touchstart', (e) => {
         if (e.touches.length === 1) {
@@ -277,13 +281,22 @@ if (window.innerWidth < 1024) {
                 bubbles: true, cancelable: true, button: 0, buttons: 1
             });
             canvasEl.dispatchEvent(mousedownEvent);
+        } 
+        // --- NEW: PINCH INIT ---
+        else if (e.touches.length === 2) {
+            initialPinchDist = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+            initialScale = canvas.ds.scale; // Store the scale at the start of the pinch
         }
     }, { passive: false });
 
     canvasEl.addEventListener('touchmove', (e) => {
         e.preventDefault(); 
         
-        if (e.touches.length === 1) {
+        // --- EXISTING: 1-FINGER PAN ---
+        if (e.touches.length === 1 && !initialPinchDist) {
             const currentX = e.touches[0].clientX;
             const currentY = e.touches[0].clientY;
             
@@ -297,13 +310,41 @@ if (window.innerWidth < 1024) {
             lastTouchY = currentY;
             
             canvas.setDirty(true, true); 
+        } 
+        // --- NEW: 2-FINGER ZOOM ---
+        else if (e.touches.length === 2 && initialPinchDist) {
+            const currentDist = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+            
+            const scaleFactor = currentDist / initialPinchDist;
+            
+            // Clamp the zoom scale so they can't zoom in/out too far
+            const newScale = Math.min(Math.max(initialScale * scaleFactor, 0.25), 2.0);
+            
+            canvas.ds.scale = newScale;
+            canvas.setDirty(true, true);
         }
     }, { passive: false });
 
     canvasEl.addEventListener('touchend', (e) => {
-        const mouseupEvent = new MouseEvent('mouseup', {
-            bubbles: true, cancelable: true, button: 0, buttons: 0
-        });
-        canvasEl.dispatchEvent(mouseupEvent);
+        // Reset pinch state if a finger is lifted
+        if (e.touches.length < 2) {
+            initialPinchDist = null;
+        }
+        
+        if (e.touches.length === 0) {
+            const mouseupEvent = new MouseEvent('mouseup', {
+                bubbles: true, cancelable: true, button: 0, buttons: 0
+            });
+            canvasEl.dispatchEvent(mouseupEvent);
+        }
     }, { passive: false });
 }
+
+// Expose a global zoom function for optional UI buttons
+window.zoomCanvas = function(factor) {
+    canvas.ds.scale = Math.min(Math.max(canvas.ds.scale * factor, 0.25), 2.0);
+    canvas.setDirty(true, true);
+};

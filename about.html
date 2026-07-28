@@ -5,211 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giallovision | About</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/global.css">
     
     <style>
-        /* BASE RESET & TYPOGRAPHY */
-        body, html {
-            margin: 0; padding: 0; background-color: #050505; color: #f8fafc;
-            font-family: 'Roboto', sans-serif; overflow-x: hidden;
-        }
-
-        /* --- NAVIGATION HEADER (FIXED, COHESIVE WITH REST OF SITE) --- */
-        .top-nav {
-            position: fixed; top: 0; left: 0; width: 100%; height: 60px;
-            background: rgba(9, 14, 19, 0.6); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08); display: flex; align-items: center; 
-            justify-content: space-between; padding: 0 5%; box-sizing: border-box; z-index: 100;
-        }
-        .nav-logo { font-weight: 900; color: #f8fafc; letter-spacing: 3px; font-size: 1.1rem; text-transform: uppercase; }
-        .nav-logo span { color: #ffb703; }
-        .nav-links { display: flex; gap: 30px; align-items: center; }
-        
-        .nav-links a.nav-item {
-            color: #f8fafc; text-decoration: none; font-size: 0.85rem;
-            font-weight: 700; letter-spacing: 2px; text-transform: uppercase; transition: color 0.3s;
-        }
-        .nav-links a.nav-item:hover, 
-        .nav-links a.nav-item.active { 
-            color: #00b4d8; 
-        }
-
-        .back-btn {
-            color: #00b4d8; background-color: rgba(0, 180, 216, 0.08); 
-            border: 1px solid #00b4d8; text-decoration: none; padding: 8px 16px;
-            font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; border-radius: 4px;
-            transition: all 0.3s ease; cursor: pointer;
-        }
-        .back-btn:hover { 
-            background-color: #00b4d8; color: #000; 
-            box-shadow: 0 0 15px rgba(0, 180, 216, 0.4); 
-        }
+        body, html { background-color: #050505; color: #f8fafc; overflow-x: hidden; }
 
         /* ABOUT SECTION LAYOUT */
-        .about-container {
-            max-width: 1400px; margin: 120px auto 100px auto; padding: 0 5%;
-        }
-        .page-title {
-            font-size: 3.5rem; font-weight: 900; text-transform: uppercase;
-            letter-spacing: -1px; margin-bottom: 60px; color: #f8fafc;
-        }
+        .about-container { max-width: 1400px; margin: 120px auto 100px auto; padding: 0 5%; }
+        .page-title { font-size: 3.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; margin-bottom: 60px; color: #f8fafc; }
 
         /* CSS GRID FOR PROFILES */
-        .team-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
-        }
+        .team-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; }
 
-        .profile-card {
-            background: rgba(9, 14, 19, 0.4); border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px; overflow: hidden; display: flex; flex-direction: column;
-        }
+        .profile-card { background: rgba(9, 14, 19, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
 
-        .profile-media {
-            width: 100%; height: 400px; background-color: #111; overflow: hidden;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .profile-media img, .profile-media video {
-            width: 100%; height: 100%; object-fit: cover; filter: grayscale(20%);
-        }
+        .profile-media { width: 100%; height: 400px; background-color: #111; overflow: hidden; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+        .profile-media img, .profile-media video { width: 100%; height: 100%; object-fit: cover; filter: grayscale(20%); }
         
         /* DUAL IMAGE COLLAGE (Flexbox Split) */
-        .profile-media.collage {
-            display: flex;
-            width: 100%;
-            height: 400px;
-            overflow: hidden;
-        }
-        
-        .profile-media.collage img {
-            flex: 1; 
-            height: 100%;
-            object-fit: cover;
-            filter: grayscale(20%);
-            transition: flex 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), filter 0.4s ease;
-        }
-        
-        /* Adds a subtle architectural divider between the images */
-        .profile-media.collage img:first-child {
-            border-right: 1px solid rgba(255, 255, 255, 0.08);
-        }
+        .profile-media.collage { display: flex; width: 100%; height: 400px; overflow: hidden; }
+        .profile-media.collage img { flex: 1; height: 100%; object-fit: cover; filter: grayscale(20%); transition: flex 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), filter 0.4s ease; }
+        .profile-media.collage img:first-child { border-right: 1px solid rgba(255, 255, 255, 0.08); }
 
         /* Interactive Hover Expansion */
-        .profile-media.collage:hover img {
-            filter: grayscale(80%); 
-        }
-        
-        .profile-media.collage img:hover {
-            flex: 1.5; 
-            filter: grayscale(0%);
-        }
-
-        /* Adjust Y-axis framing for the rocknroll photo */
-        .profile-media.collage img:nth-child(2) {
-            object-position: 50% 30%; 
-        }
+        .profile-media.collage:hover img { filter: grayscale(80%); }
+        .profile-media.collage img:hover { flex: 1.5; filter: grayscale(0%); }
+        .profile-media.collage img:nth-child(2) { object-position: 50% 30%; }
 
         .profile-info { padding: 40px; }
-        .profile-role { 
-            color: #00b4d8; font-family: monospace; font-size: 0.9rem; 
-            letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; display: block;
-        }
-        .profile-name { 
-            font-size: 2rem; font-weight: 900; margin: 0 0 20px 0; color: #ffb703; 
-            text-transform: uppercase; letter-spacing: -0.5px;
-        }
-        .profile-bio { 
-            font-size: 1.05rem; line-height: 1.7; color: #64748b; margin: 0;
-        }
+        .profile-role { color: #00b4d8; font-family: monospace; font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; display: block; }
+        .profile-name { font-size: 2rem; font-weight: 900; margin: 0 0 20px 0; color: #ffb703; text-transform: uppercase; letter-spacing: -0.5px; }
+        .profile-bio { font-size: 1.05rem; line-height: 1.7; color: #64748b; margin: 0; }
 
         @media (max-width: 900px) {
             .team-grid { grid-template-columns: 1fr; }
-            .top-nav { flex-direction: column; gap: 20px; }
+            .profile-media { height: 220px; }
+            .profile-media.collage { flex-direction: row; height: 200px; }
+            .profile-media.collage img { flex: 1; }
+            .profile-media.collage img:hover { flex: 1; filter: grayscale(0%); }
         }
-
-        /* CONTACT MODAL OVERLAY */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            display: none; align-items: center; justify-content: center; z-index: 999;
-        }
-
-        .modal-content {
-            position: relative; width: 90%; max-width: 550px;
-            background: #090e13; border: 1px solid rgba(33, 54, 77, 0.8);
-            border-radius: 8px; padding: 40px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.9), inset 0 0 20px rgba(33, 54, 77, 0.5);
-        }
-
-        .close-modal {
-            position: absolute; top: 15px; right: 20px; background: none; border: none;
-            color: #64748b; font-family: monospace; font-size: 14px; cursor: pointer; transition: color 0.2s;
-        }
-        .close-modal:hover { color: #ffb703; }
-
-        .modal-content h2 { font-size: 1.8rem; margin-top: 0; margin-bottom: 10px; color: #f8fafc; }
-        .modal-content p { font-size: 0.95rem; margin-bottom: 25px; color: #64748b; }
-
-        .input-row { display: flex; gap: 15px; margin-bottom: 15px; }
-        .input-row input { flex: 1; }
-
-        .modal-content input[type="text"], 
-        .modal-content input[type="email"], 
-        .modal-content select, 
-        .modal-content textarea {
-            width: 100%; padding: 12px; margin-bottom: 15px;
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
-            color: #f8fafc; border-radius: 4px; font-family: 'Roboto', sans-serif;
-            font-size: 0.95rem; box-sizing: border-box; transition: border-color 0.3s;
-        }
-        .modal-content input:focus, .modal-content select:focus, .modal-content textarea:focus {
-            outline: none; border-color: #00b4d8; background: rgba(0, 180, 216, 0.05);
-        }
-
-        .modal-content option {
-            background-color: #090e13;
-            color: #f8fafc;
-        }
-
-        .timeline-wrapper { margin-bottom: 25px; text-align: left; }
-        .timeline-wrapper label { display: block; font-size: 0.85rem; color: #64748b; margin-bottom: 10px; }
-        .radio-group { display: flex; gap: 10px; justify-content: space-between; }
-        .radio-group input[type="radio"] { display: none; }
-        .radio-group label {
-            flex: 1; text-align: center; padding: 10px; background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; cursor: pointer; transition: all 0.2s; margin: 0;
-        }
-        .radio-group input[type="radio"]:checked + label {
-            background: #00b4d8; color: #000; font-weight: bold; border-color: #00b4d8;
-            box-shadow: 0 0 15px rgba(0, 180, 216, 0.4);
-        }
-
-        .transmit-btn {
-            width: 100%; padding: 15px; background: #21364d83; border: 1px solid #00b4d8;
-            color: #00b4d8; font-family: monospace; font-size: 1rem; font-weight: bold;
-            border-radius: 4px; cursor: pointer; transition: all 0.3s;
-        }
-        .transmit-btn:hover { background: #00b4d8; color: #000; box-shadow: 0 0 20px rgba(0, 180, 216, 0.4); }
     </style>
 </head>
 <body>
 
     <nav class="top-nav">
-    <div class="nav-logo">GIALLOVISION // <span>CORE</span></div>
-    <div class="nav-links">
-        <a href="/" class="nav-item">Work</a>
-        <a href="/services" class="nav-item">Services</a>
-        <a href="/nodes" class="nav-item">Nodes</a>
-        <a href="/about" class="nav-item">About</a>
-        <a href="#contact" class="back-btn" data-modal="contact">Contact</a>
-    </div>
-</nav>
+        <div class="nav-logo">GIALLOVISION // <span>CORE</span></div>
+        <div class="nav-links">
+            <a href="/" class="nav-item">Work</a>
+            <a href="/services" class="nav-item">Services</a>
+            <a href="/nodes" class="nav-item">Nodes</a>
+            <a href="/about" class="nav-item">About</a>
+            <a href="#contact" class="back-btn" data-modal="contact">Contact</a>
+        </div>
+    </nav>
 
     <div class="about-container">
         <h1 class="page-title"></h1>
         
         <div class="team-grid">
-            
             <div class="profile-card">
-                <!-- Added 'collage' class and the two new images -->
                 <div class="profile-media collage">
                     <img src="./images/joey_comms.png" alt="Joey - Operations">
                     <img src="./images/joey_rocknroll.png" alt="Joey - Live Execution">
@@ -223,10 +77,8 @@
 
             <div class="profile-card">
                 <div class="profile-media">
-                    <!-- 'poster' displays frame 81 while loading or if playback is blocked -->
                     <video autoplay muted playsinline poster="./images/L4g0tt0_poster.png">
                         <source src="./videos/L4g0tt0_reel.mp4" type="video/mp4">
-                        <!-- Ultimate fallback image if HTML5 video is disabled entirely -->
                         <img src="./images/L4g0tt0_poster.png" alt="L4G0TT0 - Offline">
                     </video>
                 </div>
@@ -236,7 +88,6 @@
                     <p class="profile-bio">The automation engine of Giallovision. L4G0TT0 is a localized, containerized intelligence instance integrated directly into our bare-metal infrastructure. Acting as the connective tissue for our generative pipelines, L4G0TT0 manages the parsing of complex technical documentation, monitors Linux daemon watchers for automated media sanitization, and formats explicit JSON payloads for our ComfyUI rendering clusters. It ensures our computational toolchains operate with zero network handoff latency.</p>
                 </div>
             </div>
-
         </div>
     </div>
 

@@ -88,8 +88,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         @media (max-width: 768px) {
-            #gvis-chat-container { width: calc(100% - 40px); right: 20px; bottom: 80px; height: 60vh; }
-            #gvis-chat-container.expanded { width: calc(100% - 40px) !important; height: 85vh !important; right: 20px !important; bottom: 20px !important; }
+            #gvis-chat-container { width: calc(100% - 40px); right: 20px; bottom: 80px; height: 60dvh; }
+            #gvis-chat-container.expanded { width: calc(100% - 40px) !important; height: 85dvh !important; right: 20px !important; bottom: 20px !important; }
         }
     `;
     document.head.appendChild(style);
@@ -331,4 +331,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     document.getElementById('send-sow-btn').addEventListener('click', submitTranscript);
+    // === MOBILE KEYBOARD AUTO-FIT ENGINE ===
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', () => {
+            if (window.innerWidth <= 768 && chatContainer.classList.contains('is-open')) {
+                // Get the height of the visible screen (above the keyboard)
+                const vvHeight = window.visualViewport.height;
+                // Calculate the keyboard's exact height
+                const keyboardHeight = window.innerHeight - vvHeight;
+
+                if (keyboardHeight > 100) {
+                    // KEYBOARD IS UP: Restrict height to visible area and push bottom up
+                    chatContainer.style.height = (vvHeight - 20) + 'px';
+                    chatContainer.style.bottom = (keyboardHeight + 10) + 'px';
+                } else {
+                    // KEYBOARD IS DOWN: Clear inline styles to let CSS take over again
+                    chatContainer.style.height = '';
+                    chatContainer.style.bottom = '';
+                }
+                
+                // Force scroll to bottom so the input field isn't hidden
+                setTimeout(() => chatMessages.scrollTop = chatMessages.scrollHeight, 100);
+            }
+        });
+    }
 });

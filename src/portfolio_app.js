@@ -351,9 +351,29 @@ const vid2 = document.getElementById('portfolio-video-2');
 const img1 = document.getElementById('portfolio-img-1');
 const img2 = document.getElementById('portfolio-img-2');
 
-// Hardcode looping parameters to false to make sure ended event registers natively
-vid1.loop = false;
-vid2.loop = false;
+// Strictly enforce app-driven progression (No native looping)
+[vid1, vid2].forEach(video => {
+    video.loop = false;
+    video.muted = true;
+    video.playsInline = true;
+    video.crossOrigin = "anonymous";
+    
+    // Auto-Healer: If a video stalls mid-playback, try to kickstart it
+    video.addEventListener('stalled', () => {
+        if (video === activeMedia && video.src && video.paused) {
+            video.load();
+            video.play().catch(() => playNextInPlaylist());
+        }
+    });
+
+    // Auto-Healer: If a file fails to load entirely, skip to the next one instantly
+    video.addEventListener('error', () => {
+        if (video === activeMedia) {
+            console.warn("[GVIS] Media error detected. Skipping node.");
+            playNextInPlaylist();
+        }
+    });
+});
 
 let activeMedia = vid1; 
 
@@ -397,7 +417,6 @@ function crossfadeTo(src) {
     const isVideo = src.toLowerCase().endsWith('.mp4') || src.toLowerCase().endsWith('.webm');
 
     const triggerFade = (newMediaElement) => {
-        // Prevent flashing by running class assignment on next layout repaint
         requestAnimationFrame(() => {
             newMediaElement.className = "bg-media active-media";
             activeMedia.className = "bg-media hidden-media";
@@ -406,7 +425,7 @@ function crossfadeTo(src) {
             setTimeout(() => {
                 if (oldMedia.tagName === 'VIDEO' && oldMedia !== newMediaElement) {
                     oldMedia.pause();
-                    oldMedia.src = ""; // Flush memory pipeline allocation
+                    oldMedia.removeAttribute('src'); // True memory flush
                     oldMedia.load();
                 }
             }, 850); 
@@ -422,7 +441,6 @@ function crossfadeTo(src) {
     if (isVideo) {
         let nextVid = (activeMedia === vid1) ? vid2 : vid1;
         
-        // Fully break out of previous operations before defining source lines
         nextVid.pause();
         nextVid.src = src;
         nextVid.load();
@@ -431,8 +449,7 @@ function crossfadeTo(src) {
             nextVid.play()
                 .then(() => triggerFade(nextVid))
                 .catch(e => {
-                    // Catch execution abort loops natively without halting state progression
-                    console.warn("Playback intercept handled, tracking progression safely.");
+                    console.warn("[GVIS] Playback intercepted, advancing safely.");
                     playNextInPlaylist();
                 });
         };
@@ -448,7 +465,6 @@ function crossfadeTo(src) {
         nextImg.onload = () => triggerFade(nextImg);
         nextImg.src = src; 
         
-        // Handle immediate cached executions
         if (nextImg.complete) {
             nextImg.onload = null;
             triggerFade(nextImg);

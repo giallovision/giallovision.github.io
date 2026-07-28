@@ -8,135 +8,38 @@
     <link rel="shortcut icon" href="favicon.png?v=2">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/litegraph.js/css/litegraph.css">
+    <link rel="stylesheet" href="./css/global.css">
     
     <style>
-        body {
-            background-color: #202020;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            font-family: 'Roboto', sans-serif;
-        }
-
-        .top-nav {
-            position: fixed; top: 0; left: 0; width: 100%; height: 60px;
-            background: rgba(9, 14, 19, 0.6); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08); display: flex; align-items: center; 
-            justify-content: space-between; padding: 0 5%; box-sizing: border-box; z-index: 100;
-        }
-        .nav-logo { font-weight: 900; color: #f8fafc; letter-spacing: 3px; font-size: 1.1rem; text-transform: uppercase; }
-        .nav-logo span { color: #ffb703; }
-        
-        .nav-links { display: flex; gap: 30px; align-items: center; }
-        .nav-links a.nav-item {
-            color: #f8fafc; text-decoration: none; font-size: 0.85rem;
-            font-weight: 700; letter-spacing: 2px; text-transform: uppercase; transition: color 0.3s;
-        }
-        .nav-links a.nav-item:hover, 
-        .nav-links a.nav-item.active { 
-            color: #00b4d8; 
-        }
-
-        .back-btn {
-            color: #00b4d8; background-color: rgba(0, 180, 216, 0.08); 
-            border: 1px solid #00b4d8; text-decoration: none; padding: 8px 16px;
-            font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; border-radius: 4px;
-            transition: all 0.3s ease; cursor: pointer;
-        }
-        .back-btn:hover { 
-            background-color: #00b4d8; color: #000; 
-            box-shadow: 0 0 15px rgba(0, 180, 216, 0.4); 
-        }
-
-        #mycanvas {
-            width: 100vw;
-            height: 100vh;
-            display: block;
-        }
+        body { background-color: #202020; margin: 0; padding: 0; overflow: hidden; font-family: 'Roboto', sans-serif; }
+        #mycanvas { width: 100vw; height: 100vh; display: block; }
 
         @media (max-width: 768px) {
-            #mycanvas {
-                touch-action: none !important;
-            }
+            #mycanvas { touch-action: none !important; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+            /* Moved from bottom to top: 75px (clears the 60px navbar + 15px margin) */
+            .mobile-zoom-controls { position: fixed; top: 75px; right: 20px; display: flex; flex-direction: column; gap: 15px; z-index: 101; }
+            .mobile-zoom-btn { background: rgba(9, 14, 19, 0.8); border: 1px solid #00b4d8; color: #00b4d8; width: 45px; height: 45px; border-radius: 50%; font-size: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(5px); box-shadow: 0 0 10px rgba(0, 180, 216, 0.2); }
         }
-
-        /* MODAL STYLES */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            display: none; align-items: center; justify-content: center; z-index: 999;
-        }
-
-        .modal-content {
-            position: relative; width: 90%; max-width: 550px;
-            background: #090e13; border: 1px solid rgba(33, 54, 77, 0.8);
-            border-radius: 8px; padding: 40px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.9), inset 0 0 20px rgba(33, 54, 77, 0.5);
-        }
-
-        .close-modal {
-            position: absolute; top: 15px; right: 20px; background: none; border: none;
-            color: #64748b; font-family: monospace; font-size: 14px; cursor: pointer; transition: color 0.2s;
-        }
-        .close-modal:hover { color: #ffb703; }
-
-        .modal-content h2 { font-size: 1.8rem; margin-top: 0; margin-bottom: 10px; color: #f8fafc; }
-        .modal-content p { font-size: 0.95rem; margin-bottom: 25px; color: #64748b; }
-
-        .input-row { display: flex; gap: 15px; margin-bottom: 15px; }
-        .input-row input { flex: 1; }
-
-        .modal-content input[type="text"], 
-        .modal-content input[type="email"], 
-        .modal-content select, 
-        .modal-content textarea {
-            width: 100%; padding: 12px; margin-bottom: 15px;
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
-            color: #f8fafc; border-radius: 4px; font-family: 'Roboto', sans-serif;
-            font-size: 0.95rem; box-sizing: border-box; transition: border-color 0.3s;
-        }
-        .modal-content input:focus, .modal-content select:focus, .modal-content textarea:focus {
-            outline: none; border-color: #00b4d8; background: rgba(0, 180, 216, 0.05);
-        }
-
-        .modal-content option {
-            background-color: #090e13;
-            color: #f8fafc;
-        }
-
-        .timeline-wrapper { margin-bottom: 25px; text-align: left; }
-        .timeline-wrapper label { display: block; font-size: 0.85rem; color: #64748b; margin-bottom: 10px; }
-        .radio-group { display: flex; gap: 10px; justify-content: space-between; }
-        .radio-group input[type="radio"] { display: none; }
-        .radio-group label {
-            flex: 1; text-align: center; padding: 10px; background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; cursor: pointer; transition: all 0.2s; margin: 0;
-        }
-        .radio-group input[type="radio"]:checked + label {
-            background: #00b4d8; color: #000; font-weight: bold; border-color: #00b4d8;
-            box-shadow: 0 0 15px rgba(0, 180, 216, 0.4);
-        }
-
-        .transmit-btn {
-            width: 100%; padding: 15px; background: #21364d83; border: 1px solid #00b4d8;
-            color: #00b4d8; font-family: monospace; font-size: 1rem; font-weight: bold;
-            border-radius: 4px; cursor: pointer; transition: all 0.3s;
-        }
-        .transmit-btn:hover { background: #00b4d8; color: #000; box-shadow: 0 0 20px rgba(0, 180, 216, 0.4); }
+        @media (min-width: 769px) { .mobile-zoom-controls { display: none; } }
     </style>
 </head>
 <body>
 
     <nav class="top-nav">
-    <div class="nav-logo">GIALLOVISION // <span>CORE</span></div>
-    <div class="nav-links">
-        <a href="/" class="nav-item">Work</a>
-        <a href="/services" class="nav-item">Services</a>
-        <a href="/nodes" class="nav-item">Nodes</a>
-        <a href="/about" class="nav-item">About</a>
-        <a href="#contact" class="back-btn" data-modal="contact">Contact</a>
+        <div class="nav-logo">GIALLOVISION // <span>CORE</span></div>
+        <div class="nav-links">
+            <a href="/" class="nav-item">Work</a>
+            <a href="/services" class="nav-item">Services</a>
+            <a href="/nodes" class="nav-item">Nodes</a>
+            <a href="/about" class="nav-item">About</a>
+            <a href="#contact" class="back-btn" data-modal="contact">Contact</a>
+        </div>
+    </nav>
+
+    <div class="mobile-zoom-controls">
+        <button class="mobile-zoom-btn" onclick="window.zoomCanvas(1.25)">+</button>
+        <button class="mobile-zoom-btn" onclick="window.zoomCanvas(0.8)">-</button>
     </div>
-</nav>
 
     <canvas id="mycanvas"></canvas>
 

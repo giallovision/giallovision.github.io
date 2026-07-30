@@ -160,11 +160,18 @@ const fsSource = `
     }
 
     // ==========================================
-    // SCENE 4: TRANSLUCENT GYROID CAVE (High-Contrast & Dark Void)
+    // SCENE 4: TRANSLUCENT GYROID CAVE (Smooth & Centered)
     // ==========================================
     mat2 rot2D(float a) {
         float c = cos(a), s = sin(a);
         return mat2(c, s, -s, c);
+    }
+
+    // Pseudo-random noise to break up raymarching step banding (dithering)
+    float hash21(vec2 p) {
+        p = fract(p * vec2(123.34, 456.21));
+        p += dot(p, p + 45.32);
+        return fract(p.x * p.y);
     }
 
     float gyroid3D(vec3 p, float s) {
@@ -174,54 +181,59 @@ const fsSource = `
 
     vec3 scene4(vec2 p_in, float time, float scroll) {
         vec2 st = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / u_resolution.y;
-        vec3 rayDir = normalize(vec3(st * 1.35, 1.0));
+        vec3 rayDir = normalize(vec3(st * 1.2, 1.0));
 
-        float T = time * 0.35 + scroll * 1.0;
+        float T = time * 1.0 + scroll * 1.0;
         
-        // Deep Obsidian / Navy Base Void
-        vec3 accum = vec3(0.005, 0.012, 0.025);
-        float z = 0.25;
+        vec3 accum = vec3(0.0);
+        
+        // DITHERING FIX: Randomize starting z slightly per-pixel to erase step banding
+        float jitter = hash21(gl_FragCoord.xy) * 0.03;
+        float z = 0.1 + jitter;
 
-        for (int i = 0; i < 24; i++) {
+        // 25 iterations provide a smooth density field without dropping frames
+        for (int i = 0; i < 25; i++) {
             vec3 p = rayDir * z;
-            p.z += T * 0.08;
+            p.z += T * 0.12; // Smooth forward movement
             
-            float s_val = p.y + 0.12;
-            p.y = abs(s_val) - 0.1;
+            // Gentle, symmetric rotation around camera center (No vertical bias)
+            p.xy *= rot2D(-0.25 * p.z + T * 0.08); 
 
-            p.xy *= rot2D(-2.0 * p.z + 1.5);
-            p.y -= 0.15;
+            // Gyroid scale set to a comfortable volumetric density
+            float d = gyroid3D(p, 4.5);
 
-            float d = gyroid3D(p, 7.0) * 0.5;
-
-            float phase = sin(0.4 * p.z + T * 0.25) * 0.5 + 0.5;
-            
-            // Vibrant Giallovision Colors
-            vec3 tealNavy  = vec3(0.0, 0.70, 0.90);
+            // Color modulation along Z axis
+            float phase = sin(0.35 * p.z + T * 0.2) * 0.5 + 0.5;
+            vec3 tealNavy  = vec3(0.0, 0.75, 0.95);
             vec3 amberGold = vec3(1.0, 0.50, 0.08);
             vec3 glowColor = mix(tealNavy, amberGold, phase);
-            
-            float factor = (s_val > 0.0 ? 1.0 : 0.12);
-            // Raised floor (0.012) prevents division-by-zero whiteout explosions
-            float denom = max(s_val > 0.0 ? d : d * d * d, 0.012);
-            
-            // Tamed accumulation intensity
-            accum += factor * glowColor * (0.0022 / denom);
 
-            z += d + 0.012; 
+            // FOG FIX: Exponential depth decay stops distant pop-in
+            float depthFade = exp(-0.28 * z); 
+
+            // BANDING FIX: Exponential density curve replaces (1 / d) division, 
+            // turning harsh stepped rings into soft translucent volumetric waves
+            float density = exp(-d * 18.0);
+            
+            accum += glowColor * density * 0.025 * depthFade;
+
+            // Adaptive march step keeps surfaces smooth
+            z += max(d * 0.4, 0.035); 
         }
 
-        // Central Wisp Accent
-        float wispPulse = (1.2 + sin(T * 1.2) * sin(2.1 * T));
-        vec3 wispCol = mix(vec3(0.0, 0.75, 0.95), vec3(1.0, 0.55, 0.10), sin(T * 0.4) * 0.5 + 0.5);
-        accum += wispPulse * 0.02 * wispCol / max(length(st), 0.15);
+        // Central Subtle Glow Accent
+        float wisp = 0.012 / max(length(st), 0.18);
+        vec3 wispCol = mix(vec3(0.0, 0.8, 1.0), vec3(1.0, 0.45, 0.05), sin(T * 0.3) * 0.5 + 0.5);
+        accum += wisp * wispCol;
 
-        // Tone Map + Steep Contrast Curve (Keeps darks pitch black)
-        vec3 col = accum / (accum + 0.75);
-        col = pow(col, vec3(1.65)); 
+        // Tone Map + Deep Contrast
+        vec3 col = accum / (accum + 0.84);
+        col = pow(col, vec3(1.2)); 
         
-        return clamp(col, 0.0, 1.0);
-    }
+        // Deep Midnight/Navy background tint
+        vec3 bg = vec3(0.003, 0.008, 0.018);
+        return clamp(col + bg, 0.0, 1.0);
+}
 
     vec3 getScene(int id, vec2 p, float time, float scroll) {
         if (id == 1) return scene1(p, time, scroll);

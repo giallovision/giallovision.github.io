@@ -59,57 +59,60 @@ img, video { max-width: 100%; height: auto; }
     .nav-links a.nav-item { font-size: 0.75rem; letter-spacing: 1px; }
     .back-btn { font-size: 0.7rem; padding: 6px 12px; }
 
-    /* 2. Global Structural Reset (Forces Single Column) */
-    .about-container, 
+    /* 2. Strip Absolute Positioning & Force Flex Column */
+    .nodes-container,
+    .services-container,
+    .about-container,
     .about-grid, 
-    .team-wrapper,
-    .services-container, 
-    .nodes-container {
+    .team-wrapper {
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
+        position: relative !important;
         width: 100% !important;
-        padding: 15px !important;
+        height: auto !important; /* Kills fixed desktop heights */
+        padding: 20px 15px !important;
         box-sizing: border-box !important;
-        overflow-x: hidden !important; /* Prevents side-scrolling */
+        overflow-x: hidden !important; 
+        overflow-y: auto !important;
     }
 
-    /* 3. Global Card Restraints (Forces full width on mobile) */
-    .about-card, 
+    /* 3. Nuke Inline Coordinates on the Nodes */
     .node, 
     .service-item, 
+    .about-card, 
     .info-box {
+        position: relative !important; /* Overrides inline absolute */
+        left: 0 !important;            /* Kills inline X coords */
+        top: 0 !important;             /* Kills inline Y coords */
+        transform: none !important;    /* Kills translate transforms */
+        
+        display: block !important;
         width: 100% !important;
         max-width: 100% !important;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-        margin-bottom: 25px !important;
-        padding: 20px !important;
+        margin: 0 0 30px 0 !important; /* Stack them with bottom spacing */
+        padding: 25px !important;
         box-sizing: border-box !important;
     }
 
-    /* 4. MASSIVE TYPOGRAPHY FOR DESCRIPTIVE BOXES */
-    .info-box p, 
-    .about-card p, 
-    .node p, 
-    .service-item p {
-        font-size: 1.35rem !important; /* Cranks paragraph text way up */
+    /* 4. GIGANTIC MOBILE TYPOGRAPHY */
+    /* Target paragraphs, spans, and inner divs */
+    .node p, .node span, .node div,
+    .service-item p, .service-item span, .service-item div,
+    .about-card p, .about-card span, .about-card div,
+    .info-box p, .info-box span, .info-box div {
+        font-size: 1.6rem !important; /* Massive body text */
         line-height: 1.6 !important;
+        white-space: normal !important; /* Prevents text from staying in one long line */
     }
 
-    .info-box h1, .info-box h2, .info-box h3,
-    .about-card h1, .about-card h2, .about-card h3,
+    /* Target all headers inside the boxes */
     .node h1, .node h2, .node h3,
-    .service-item h1, .service-item h2, .service-item h3 {
-        font-size: 1.7rem !important; /* Keeps headers slightly larger than the huge paragraph text */
-        margin-bottom: 12px !important;
-    }
-    
-    /* If you have span tags or tiny labels in those boxes, bump them too */
-    .info-box span, 
-    .about-card span, 
-    .node span, 
-    .service-item span {
-        font-size: 1.1rem !important;
+    .service-item h1, .service-item h2, .service-item h3,
+    .about-card h1, .about-card h2, .about-card h3,
+    .info-box h1, .info-box h2, .info-box h3 {
+        font-size: 2.2rem !important; /* Massive headers */
+        margin-bottom: 15px !important;
+        white-space: normal !important;
     }
 }

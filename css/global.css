@@ -48,16 +48,43 @@ img, video { max-width: 100%; height: auto; }
     box-shadow: 0 0 15px rgba(0, 180, 216, 0.4); 
 }
 
-/* --- MOBILE GLOBAL OVERRIDES --- */
-@media (max-width: 768px) {
-    /* Shrink the logo and padding to fit everything */
+/* =========================================
+   MOBILE GLOBAL OVERRIDES (Below 800px)
+   ========================================= */
+@media (max-width: 800px) {
+    /* 1. Navbar Restraints */
     .top-nav { padding: 0 15px; }
     .nav-logo { font-size: 0.85rem; letter-spacing: 1px; margin-right: 10px; }
-    
-    /* Tighten the gaps between links */
     .nav-links { gap: 15px; padding-right: 15px; }
     .nav-links a.nav-item { font-size: 0.75rem; letter-spacing: 1px; }
-    
-    /* Shrink the contact button slightly */
     .back-btn { font-size: 0.7rem; padding: 6px 12px; }
+
+    /* 2. Global Structural Reset (Forces Single Column) */
+    .about-container, 
+    .about-grid, 
+    .team-wrapper,
+    .services-container, 
+    .nodes-container {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        width: 100% !important;
+        padding: 15px !important;
+        box-sizing: border-box !important;
+        overflow-x: hidden !important; /* Prevents side-scrolling */
+    }
+
+    /* 3. Global Card Restraints (Forces full width on mobile) */
+    .about-card, 
+    .node, 
+    .service-item, 
+    .info-box {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        margin-bottom: 25px !important;
+        padding: 20px !important;
+        box-sizing: border-box !important;
+    }
 }

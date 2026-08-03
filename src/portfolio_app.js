@@ -476,7 +476,7 @@ if(masterPlaylist.length > 0) {
 let smoothScrollY = 0;
 
 // --- FRAMERATE LIMITER ---
-const FPS = 24; // Change to 24 for a more cinematic feel
+const FPS = 30; // Change to 24 for a more cinematic feel
 const fpsInterval = 1000 / FPS;
 let lastTime = 0;
 

@@ -198,15 +198,22 @@ p { font-size: clamp(0.85rem, 2vw, 1.15rem); line-height: 1.7; color: var(--text
     }
 
     /* --- MASSIVE MOBILE TYPOGRAPHY OVERRIDES --- */
-    h1 { font-size: 2rem !important; margin-bottom: 5px !important; }
-    h2 { font-size: 1.3rem !important; margin-bottom: 15px !important; }
+    h1 { 
+        font-size: 2.2rem !important; 
+        margin-bottom: 5px !important; 
+    }
+    h2 { 
+        font-size: 1.6rem !important; 
+        margin-bottom: 15px !important; 
+    }
     p { 
-        font-size: 1.15rem !important; /* Cranks the paragraph text way up */
-        line-height: 1.5 !important; 
+        /* Cranked up to 1.4rem (approx 22px+), almost as big as the H2 */
+        font-size: 1.4rem !important; 
+        line-height: 1.6 !important; 
         margin-bottom: 25px !important;
     }
     .tech-stack { 
-        font-size: 0.9rem !important; 
-        padding: 14px 20px !important; 
+        font-size: 1.1rem !important; 
+        padding: 16px 22px !important; 
     }
 }

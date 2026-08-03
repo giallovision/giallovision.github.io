@@ -87,4 +87,29 @@ img, video { max-width: 100%; height: auto; }
         padding: 20px !important;
         box-sizing: border-box !important;
     }
+
+    /* 4. MASSIVE TYPOGRAPHY FOR DESCRIPTIVE BOXES */
+    .info-box p, 
+    .about-card p, 
+    .node p, 
+    .service-item p {
+        font-size: 1.35rem !important; /* Cranks paragraph text way up */
+        line-height: 1.6 !important;
+    }
+
+    .info-box h1, .info-box h2, .info-box h3,
+    .about-card h1, .about-card h2, .about-card h3,
+    .node h1, .node h2, .node h3,
+    .service-item h1, .service-item h2, .service-item h3 {
+        font-size: 1.7rem !important; /* Keeps headers slightly larger than the huge paragraph text */
+        margin-bottom: 12px !important;
+    }
+    
+    /* If you have span tags or tiny labels in those boxes, bump them too */
+    .info-box span, 
+    .about-card span, 
+    .node span, 
+    .service-item span {
+        font-size: 1.1rem !important;
+    }
 }

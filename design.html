@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giallovision | Stage Design</title>
+    <link rel="icon" type="image/png" href="favicon.png?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/global.css">
+    
+    <style>
+        body { margin: 0; padding: 0; overflow: hidden; background-color: #f0f0f0; } /* Napkin white base */
+        #design-canvas { display: block; width: 100vw; height: 100vh; }
+        
+        /* Temporary UI for prototyping the phases */
+        .phase-ui {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 15px; z-index: 100;
+        }
+        .phase-btn {
+            background: rgba(9, 14, 19, 0.8); border: 1px solid #00b4d8; color: #00b4d8;
+            padding: 10px 20px; font-family: monospace; font-weight: bold; cursor: pointer;
+            backdrop-filter: blur(5px); border-radius: 4px; transition: 0.3s;
+        }
+        .phase-btn:hover { background: #00b4d8; color: #000; }
+    </style>
+
+    <!-- 1. Import Map for Three.js (No bundler required!) -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <!-- Standard Giallovision Nav -->
+    <nav class="top-nav">
+        <div class="nav-logo">GIALLOVISION // <span>CORE</span></div>
+        <div class="nav-links">
+            <a href="/" class="nav-item">Work</a>
+            <!-- <a href="/design" class="nav-item">Design</a> -->
+            <a href="/services" class="nav-item">Services</a>
+            <a href="/nodes" class="nav-item">Nodes</a>
+            <a href="/about" class="nav-item">About</a>
+            <a href="#contact" class="back-btn" data-modal="contact">Contact</a>
+        </div>
+    </nav>
+
+    <!-- The WebGL Canvas -->
+    <canvas id="design-canvas"></canvas>
+
+    <!-- 2. Load the Module -->
+    <script type="module" src="./src/design_main.js"></script>
+    <script src="./src/contact_modal.js" defer></script>
+    <script src="./src/l4g0tt0.js?v=4" defer></script>
+</body>
+</html>

@@ -36,6 +36,7 @@ body {
     top: 50%; left: 50%; 
     width: 90%; max-width: 580px; 
     padding: 50px 45px;
+    box-sizing: border-box; /* Global padding restraint */
     display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
     
     background: rgba(9, 14, 19, 0.6);
@@ -58,13 +59,14 @@ body {
     filter: blur(0px); pointer-events: auto; 
 }
 
-h1 { color: var(--accent-gold); font-size: 3rem; margin: 0 0 10px 0; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; line-height: 1.1; }
-h2 { color: var(--accent-teal); font-size: 1.35rem; margin: 0 0 20px 0; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
-p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35px 0; font-weight: 400; transition: color 0.4s ease; }
+/* Fluid Typography that scales seamlessly across all devices */
+h1 { color: var(--accent-gold); font-size: clamp(1.6rem, 5vw, 3rem); margin: 0 0 10px 0; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; line-height: 1.1; }
+h2 { color: var(--accent-teal); font-size: clamp(1rem, 2.5vw, 1.35rem); margin: 0 0 20px 0; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
+p { font-size: clamp(0.85rem, 2vw, 1.15rem); line-height: 1.7; color: var(--text-dim); margin: 0 0 35px 0; font-weight: 400; transition: color 0.4s ease; }
 .step.is-active p { color: var(--text-main); text-shadow: 0 4px 20px rgba(0,0,0,0.9); }
 
 .tech-stack { 
-    color: var(--accent-gold); font-size: 0.85rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent-gold); font-size: clamp(0.65rem, 1.5vw, 0.85rem); font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
     background: rgba(0, 0, 0, 0.8); padding: 12px 20px; border-radius: 4px; border: 1px solid var(--border-soft); display: inline-block;
     transform: translate3d(0, 20px, 0); opacity: 0; 
     will-change: transform, opacity;
@@ -188,9 +190,4 @@ p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35
     .step.is-active { 
         transform: translate3d(-50%, -50%, 0) scale(1) !important; 
     }
-    
-    h1 { font-size: 1.6rem !important; }
-    h2 { font-size: 1.0rem !important; }
-    p { font-size: 0.85rem !important; margin-bottom: 20px !important; }
-    .tech-stack { font-size: 0.68rem !important; padding: 8px 12px !important; }
 }

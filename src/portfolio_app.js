@@ -475,7 +475,25 @@ if(masterPlaylist.length > 0) {
 
 let smoothScrollY = 0;
 
+// --- FRAMERATE LIMITER ---
+const FPS = 24; // Change to 24 for a more cinematic feel
+const fpsInterval = 1000 / FPS;
+let lastTime = 0;
+
 function render(time) {
+    // Request the next frame immediately, but we might skip drawing it
+    requestAnimationFrame(render);
+
+    // Calculate time since the last frame was drawn
+    const elapsed = time - lastTime;
+
+    // If enough time hasn't passed, skip this frame
+    if (elapsed < fpsInterval) return;
+
+    // Adjust lastTime to account for slight variations in frame delivery
+    lastTime = time - (elapsed % fpsInterval);
+
+    // --- YOUR EXISTING RENDER LOGIC ---
     smoothScrollY += (window.scrollY - smoothScrollY) * 0.1;
     let shaderScroll = smoothScrollY / window.innerHeight;
 
@@ -495,8 +513,7 @@ function render(time) {
     
     gl.uniform1f(transLocation, easeInOutQuad(transProgress));
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    
-    requestAnimationFrame(render);
 }
 
+// Kick off the loop
 requestAnimationFrame(render);

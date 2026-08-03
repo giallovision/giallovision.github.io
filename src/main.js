@@ -125,12 +125,39 @@ window.addEventListener('giallo_oom_error', () => {
     node_osc.disconnectOutput(0); 
 });
 
-// --- RESPONSIVE CAMERA AUTO-FRAMING ---
-function autoCenterCamera() {
-    const screenWidth = window.innerWidth;
-    const screenHeight = window.innerHeight;
-    const isMobile = screenWidth < 768;
+// --- DYNAMIC NODE PLACEMENT & RESPONSIVE LAYOUT ---
+function applyResponsiveLayout(isMobile) {
+    if (isMobile) {
+        // Vertical Column Layout for Mobile
+        node_console.pos = [20, 50];
+        node_res.pos = [20, 350];
+        node_contact.pos = [20, 490];
+        node_osc.pos = [20, 630];
+        node_loadvae.pos = [20, 810];
+        node_gen.pos = [20, 930];
+        node_outdoor_sphere.pos = [20, 1200];
+        node_indoor_sphere.pos = [20, 1440];
+        node_vae.pos = [20, 1680];
+        node_vhs.pos = [20, 1780];
+    } else {
+        // Multi-Column Layout for Desktop
+        node_console.pos = [col1, 50];
+        node_res.pos = [col1, 350];
+        node_contact.pos = [col1, 490];
+        node_osc.pos = [col1, 630];
 
+        node_loadvae.pos = [col2, 50];
+        node_gen.pos = [col2, 170];
+        node_outdoor_sphere.pos = [col2, 350];
+        node_indoor_sphere.pos = [col2, 590];
+
+        node_vae.pos = [col3, 50];
+        node_vhs.pos = [col3, 170];
+    }
+}
+
+// --- RESPONSIVE CAMERA AUTO-FRAMING ---
+function autoCenterCamera(screenWidth, screenHeight, isMobile) {
     if (isMobile) {
         // Sets a clear, readable zoom floor and offset coordinates for vertical displays
         canvas.ds.scale = 0.55; 
@@ -162,10 +189,16 @@ function autoCenterCamera() {
 
 // CLEAN GRAPHICS WINDOW INITIALIZER
 function updateCanvasResolution() {
-    canvasEl.width = window.innerWidth;
-    canvasEl.height = window.innerHeight;
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+    const isMobile = screenWidth < 768;
+
+    canvasEl.width = screenWidth;
+    canvasEl.height = screenHeight;
     canvas.resize();
-    autoCenterCamera();
+    
+    applyResponsiveLayout(isMobile);
+    autoCenterCamera(screenWidth, screenHeight, isMobile);
 }
 
 window.addEventListener("resize", updateCanvasResolution);

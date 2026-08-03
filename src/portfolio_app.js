@@ -160,80 +160,73 @@ const fsSource = `
     }
 
     // ==========================================
-    // SCENE 4: TRANSLUCENT GYROID CAVE (Smooth & Centered)
+    // SCENE 4: ORGANIC TUNNEL (Wavy Corona, Tiny Core, Deep Shadows)
     // ==========================================
     mat2 rot2D(float a) {
         float c = cos(a), s = sin(a);
         return mat2(c, s, -s, c);
     }
 
-    // Pseudo-random noise to break up raymarching step banding (dithering)
-    float hash21(vec2 p) {
-        p = fract(p * vec2(123.34, 456.21));
-        p += dot(p, p + 45.32);
-        return fract(p.x * p.y);
-    }
-
-    float gyroid3D(vec3 p, float s) {
-        p *= s;
-        return abs(dot(sin(p), cos(p.zxy))) / s;
-    }
-
     vec3 scene4(vec2 p_in, float time, float scroll) {
         vec2 st = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / u_resolution.y;
-        vec3 rayDir = normalize(vec3(st * 1.2, 1.0));
-
-        float T = time * 1.0 + scroll * 1.0;
         
-        vec3 accum = vec3(0.0);
+        // THE FOV FIX: Changed st * 2.0 to st * 3.3
+        // This is a wider-angle virtual lens. It shrinks the center void 
+        // and pulls all the wavy "legs" from the edges into the frame.
+        vec3 d = normalize(vec3(st * 2.0, 1.0)); 
         
-        // DITHERING FIX: Randomize starting z slightly per-pixel to erase step banding
-        float jitter = hash21(gl_FragCoord.xy) * 0.03;
-        float z = 0.1 + jitter;
-
-        // 25 iterations provide a smooth density field without dropping frames
-        for (int i = 0; i < 25; i++) {
-            vec3 p = rayDir * z;
-            p.z += T * 0.12; // Smooth forward movement
+        float T = (time * 0.05) + (scroll * 0.1);
+        vec3 p = vec3(0.0);
+        p.z = T * 2.0; 
+        
+        float s = 0.0;
+        float dens = 0.0; // Track pure density first, color it later
+        
+        for (float i = 0.0; i < 25.0; i++) {
+            // Re-introduced slightly more twist to help the corona spiral
+            p.xy *= rot2D(-p.z * 0.01 - T * 0.15); 
             
-            // Gentle, symmetric rotation around camera center (No vertical bias)
-            p.xy *= rot2D(-0.25 * p.z + T * 0.08); 
-
-            // Gyroid scale set to a comfortable volumetric density
-            float d = gyroid3D(p, 4.5);
-
-            // Color modulation along Z axis
-            float phase = sin(0.35 * p.z + T * 0.2) * 0.5 + 0.5;
-            vec3 tealNavy  = vec3(0.0, 0.75, 0.95);
-            vec3 amberGold = vec3(1.0, 0.50, 0.08);
-            vec3 glowColor = mix(tealNavy, amberGold, phase);
-
-            // FOG FIX: Exponential depth decay stops distant pop-in
-            float depthFade = exp(-0.28 * z); 
-
-            // BANDING FIX: Exponential density curve replaces (1 / d) division, 
-            // turning harsh stepped rings into soft translucent volumetric waves
-            float density = exp(-d * 18.0);
+            s = 0.6;
             
-            accum += glowColor * density * 0.025 * depthFade;
-
-            // Adaptive march step keeps surfaces smooth
-            z += max(d * 0.4, 0.035); 
+            // THE GEOMETRY FIX: Shrunk the cylinder radius from 10.0 down to 4.0.
+            // This forces the physical walls much closer to the camera.
+            s = max(s, 6.3 * (-length(p.xy) + 4.0));
+            
+            // THE CORONA FIX: Amplified the sine wave deformation.
+            // This creates thicker, more aggressive "wavy legs" that jut into the tunnel.
+            s += abs(p.y * 0.1 + sin(T - p.x * 1.2) * 2.1 + 0.5);
+            
+            p += d * s;
+            
+            // Accumulate pure volumetric density (like the original shader)
+            dens += 1.0 / (s * 0.21);
         }
-
-        // Central Subtle Glow Accent
-        float wisp = 0.012 / max(length(st), 0.18);
-        vec3 wispCol = mix(vec3(0.0, 0.8, 1.0), vec3(1.0, 0.45, 0.05), sin(T * 0.3) * 0.5 + 0.5);
-        accum += wisp * wispCol;
-
-        // Tone Map + Deep Contrast
-        vec3 col = accum / (accum + 0.84);
-        col = pow(col, vec3(1.2)); 
         
-        // Deep Midnight/Navy background tint
-        vec3 bg = vec3(0.003, 0.008, 0.018);
+        // COLOR MAP FIX: Calculate color based on the final depth traveled (p.z)
+        // and apply it to the density all at once for buttery smooth volume blending.
+        float phase = -sin(p.z * 0.15 - T * 1.5) * 0.5 + 0.5;
+        vec3 tealNavy  = vec3(0.0, 0.75, 0.95);
+        vec3 amberGold = vec3(1.0, 0.50, 0.08);
+        vec3 colorMap = mix(tealNavy, amberGold, phase);
+        
+        vec3 accum = (dens / 50.0) * colorMap;
+        
+        // Vignette to darken the extreme edges
+        float l = length(st);
+        accum *= max(0.0, 1.2 - l * 2.1);
+        
+        // Tiny glowing core at the absolute center
+        float tinyGlow = smoothstep(0.08, 0.0, l);
+        accum += mix(tealNavy, amberGold, sin(T)*0.5+0.5) * tinyGlow * 1.5; 
+        
+        // --- GIALLOVISION TONE MAP & GAMMA ---
+        vec3 col = accum / (accum + 0.55);
+        // Deep shadows (pulled back slightly to 1.65 so the dark waves aren't completely lost)
+        col = pow(col, vec3(1.65)); 
+        
+        vec3 bg = vec3(0.001, 0.003, 0.008);
         return clamp(col + bg, 0.0, 1.0);
-}
+    }
 
     vec3 getScene(int id, vec2 p, float time, float scroll) {
         if (id == 1) return scene1(p, time, scroll);

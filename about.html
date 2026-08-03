@@ -14,8 +14,8 @@
         .about-container { max-width: 1400px; margin: 120px auto 100px auto; padding: 0 5%; }
         .page-title { font-size: 3.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; margin-bottom: 60px; color: #f8fafc; }
 
-        /* CSS GRID FOR PROFILES */
-        .team-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; }
+        /* CSS GRID FOR PROFILES -> CHANGED TO FLEX FOR MOBILE SUPPORT */
+        .team-grid { display: flex; flex-direction: row; gap: 60px; }
 
         .profile-card { background: rgba(9, 14, 19, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
 
@@ -38,7 +38,8 @@
         .profile-bio { font-size: 1.05rem; line-height: 1.7; color: #64748b; margin: 0; }
 
         @media (max-width: 900px) {
-            .team-grid { grid-template-columns: 1fr; }
+            .team-grid { flex-direction: column; align-items: center; }
+            .profile-card { width: 100%; max-width: 500px; }
             .profile-media { height: 220px; }
             .profile-media.collage { flex-direction: row; height: 200px; }
             .profile-media.collage img { flex: 1; }

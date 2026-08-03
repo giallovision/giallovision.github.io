@@ -116,59 +116,79 @@ p { font-size: 1.15rem; line-height: 1.7; color: var(--text-dim); margin: 0 0 35
 .media-stack .active-media { opacity: 1; z-index: 2; }
 .media-stack .hidden-media { opacity: 0; z-index: 1; }
 
+/* --- UNIFIED MOBILE & TABLET LAYOUT (Under 1024px) --- */
 @media (max-width: 1024px) {
-    .fixed-ui {
-        flex-direction: column-reverse;
-        position: fixed; top: 60px; left: 0; right: 0; width: 100%; height: calc(100vh - 60px);
-    }
-    .text-column { width: 100%; height: 60%; }
-    .media-column { width: 100%; height: 40%; border-bottom: 1px solid var(--border-soft); background: var(--bg-dark); }
-    .step { transform: translate3d(-50%, -50%, 0); width: 85%; padding: 30px 20px; }
-    h1 { font-size: 2.2rem; }
-    h2 { font-size: 1.1rem; }
-    p { font-size: 1rem; }
-    .media-stack { width: 100%; border-radius: 0; border: none; padding: 20px; }
-    .media-stack .bg-media { top: 20px; left: 20px; width: calc(100% - 40px); height: calc(100% - 40px); }
-}
-
-@media (max-width: 768px) {
     body { overflow-x: hidden !important; }
+    
     .fixed-ui {
-        top: 60px !important;
+        flex-direction: column-reverse !important;
+        position: fixed !important; 
+        top: 60px !important; 
+        left: 0 !important; 
+        right: 0 !important; 
+        width: 100% !important; 
         height: calc(100vh - 60px) !important;
     }
-    .media-column { height: 45% !important; padding: 0 !important; }
+    
+    .text-column { 
+        width: 100% !important; 
+        height: 55% !important; 
+        padding: 0 !important; 
+    }
+    
+    .media-column { 
+        width: 100% !important;
+        height: 45% !important; 
+        padding: 0 !important; 
+        display: flex !important; 
+        align-items: center !important; 
+        justify-content: center !important; 
+        background: transparent !important; 
+        border: none !important; 
+    }
+    
     .media-stack { 
         position: relative !important;
-        width: 100% !important;
-        height: 100% !important;
-        padding: 0 !important; 
-        border-radius: 0 !important;
-        border: none !important;
-        box-shadow: none !important;
-        aspect-ratio: auto !important; 
+        width: 92% !important; 
+        height: auto !important;
+        aspect-ratio: 16 / 9 !important; 
+        padding: 10px !important; 
+        margin: 0 auto !important;
+        border-radius: 8px !important;
+        border: 1px solid var(--border-soft) !important;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7) !important;
+        background: rgba(9, 14, 19, 0.6) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
     }
     
     .media-stack .bg-media {
         position: absolute !important;
-        top: 50% !important;
-        left: 50% !important;
-        transform: translate(-50%, -50%) !important;
-        width: 100% !important;
-        height: 100% !important;
-        max-width: calc(100% - 40px) !important; /* Provides a clean 20px margin on all sides */
-        max-height: calc(100% - 40px) !important;
-        object-fit: contain !important;
+        top: 10px !important;
+        left: 10px !important;
+        transform: none !important;
+        width: calc(100% - 20px) !important;
+        height: calc(100% - 20px) !important;
+        max-width: 100% !important; 
+        max-height: 100% !important;
+        object-fit: cover !important;
+        border-radius: 4px !important; 
         -webkit-mask-image: none !important;
         mask-image: none !important;
     }
-    .text-column { height: 55% !important; padding: 0 !important; }
+    
     .step {
         transform: translate3d(-50%, -50%, 0) scale(0.92) !important;
-        width: 92% !important; padding: 24px 20px !important;
-        border-radius: 8px !important; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7) !important;
+        width: 92% !important; 
+        padding: 24px 20px !important;
+        border-radius: 8px !important; 
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7) !important;
     }
-    .step.is-active { transform: translate3d(-50%, -50%, 0) scale(1) !important; }
+    
+    .step.is-active { 
+        transform: translate3d(-50%, -50%, 0) scale(1) !important; 
+    }
+    
     h1 { font-size: 1.6rem !important; }
     h2 { font-size: 1.0rem !important; }
     p { font-size: 0.85rem !important; margin-bottom: 20px !important; }

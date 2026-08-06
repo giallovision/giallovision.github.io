@@ -8,117 +8,15 @@
     <link rel="shortcut icon" href="favicon.png?v=2">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/global.css">
-    
     <style>
-        body { 
-            background-color: #090e13; 
-            color: #ffffff;
-            margin: 0; 
-            padding: 0; 
-            font-family: 'Roboto', sans-serif; 
-            overflow-x: hidden;
-        }
-
-        /* Container to push content below the fixed nav */
-        .services-wrapper {
-            padding: 100px 5% 80px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .services-header {
-            font-size: clamp(2rem, 5vw, 3rem); 
-            font-weight: 900;
-            color: #ffb703; /* CORRECTED GIALLOVISION GOLD */
-            margin-bottom: 40px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border-bottom: 2px solid #00b4d8;
-            padding-bottom: 15px;
-            display: inline-block;
-        }
-
-        /* ====================================================
-           MOBILE FIRST DEFAULTS (Single Column Stack)
-           ==================================================== */
-        .services-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-            width: 100%;
-        }
-
-        .service-card {
-            background: rgba(15, 22, 30, 0.8);
-            border: 1px solid rgba(0, 180, 216, 0.2);
-            border-radius: 8px;
-            padding: 30px 20px; /* Mobile padding */
-            display: flex;
-            flex-direction: column;
-            text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-            box-sizing: border-box;
-            width: 100%;
-        }
-
-        .service-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 180, 216, 0.15);
-            border-color: #00b4d8;
-        }
-
-        /* Mobile Typography Aligning with Global.css overrides */
-        .service-card h2 {
-            color: #00b4d8;
-            font-size: 1.8rem;
-            margin-top: 0;
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-
-        .service-card p {
-            font-size: 1.4rem;
-            line-height: 1.6;
-            color: #cccccc;
-            margin-bottom: 25px;
-            flex-grow: 1; 
-        }
-
-        .service-card .tech-stack {
-            font-family: monospace;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #ffb703; /* CORRECTED GIALLOVISION GOLD */
-            background: #04080c; 
-            padding: 16px 20px;
-            border-radius: 4px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        /* ====================================================
-           DESKTOP OVERRIDE (Only triggers on screens > 900px)
-           ==================================================== */
+        /* Component-Specific Styles */
+        .service-content { padding: 30px 20px; display: flex; flex-direction: column; flex-grow: 1; text-align: center; }
+        .service-content h2 { color: var(--accent-teal); font-size: clamp(1.4rem, 4vw, 1.8rem); margin: 0 0 15px 0; font-weight: 700; }
+        .service-content p { font-size: clamp(1.1rem, 3vw, 1.4rem); line-height: 1.6; color: #cccccc; margin-bottom: 25px; flex-grow: 1; }
+        .tech-stack { font-family: monospace; font-size: clamp(0.85rem, 2vw, 1.1rem); font-weight: 700; color: var(--accent-gold); background: #04080c; padding: 15px 20px; border-radius: 4px; letter-spacing: 1px; text-transform: uppercase; }
+        
         @media screen and (min-width: 900px) {
-            .services-grid {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 40px;
-            }
-            .service-card {
-                padding: 40px;
-            }
-            .service-card h2 {
-                font-size: 1.6rem;
-            }
-            .service-card p {
-                font-size: 1.1rem;
-                line-height: 1.7;
-            }
-            .service-card .tech-stack {
-                font-size: 0.85rem;
-                padding: 15px 20px;
-            }
+            .service-content { padding: 40px; }
         }
     </style>
 </head>
@@ -135,43 +33,44 @@
         </div>
     </nav>
 
-    <div class="services-wrapper">
-        <h1 class="services-header">Core Services</h1>
+    <div class="page-wrapper">
+        <h1 class="page-header">Core Services</h1>
         
-        <div class="services-grid">
-            
-            <!-- Service 1 -->
-            <div class="service-card">
-                <h2>Live Media Operations & System Engineering</h2>
-                <p>Orchestrating hardware mapping arrays and software playback pipelines for high-stakes broadcast environments. Deploying real-time video canvas matrices integrated directly into professional engineering processors for rock-solid physical pixel alignment.</p>
-                <div class="tech-stack">> PLATFORMS: RESOLUME / TOUCHDESIGNER / COEX VMP / PIXELHUE</div>
+        <div class="shared-grid">
+            <div class="shared-card">
+                <div class="service-content">
+                    <h2>Live Media Operations & System Engineering</h2>
+                    <p>Orchestrating hardware mapping arrays and software playback pipelines for high-stakes broadcast environments. Deploying real-time video canvas matrices integrated directly into professional engineering processors for rock-solid physical pixel alignment.</p>
+                    <div class="tech-stack">> PLATFORMS: RESOLUME / TOUCHDESIGNER / COEX VMP / PIXELHUE</div>
+                </div>
             </div>
 
-            <!-- Service 2 -->
-            <div class="service-card">
-                <h2>Design & Technical Drafting</h2>
-                <p>Translating spatial geometry into physical execution. Developing comprehensive stage rigging blueprints, power flows, and data schematics. Establishing 3D environmental pre-visualizations and engineering embedded controller automation sketches.</p>
-                <div class="tech-stack">> STACK: VECTORWORKS / DEPENCE / C++ / PYTHON / LUA</div>
+            <div class="shared-card">
+                <div class="service-content">
+                    <h2>Design & Technical Drafting</h2>
+                    <p>Translating spatial geometry into physical execution. Developing comprehensive stage rigging blueprints, power flows, and data schematics. Establishing 3D environmental pre-visualizations and engineering embedded controller automation sketches.</p>
+                    <div class="tech-stack">> STACK: VECTORWORKS / DEPENCE / C++ / PYTHON / LUA</div>
+                </div>
             </div>
 
-            <!-- Service 3 -->
-            <div class="service-card">
-                <h2>Nodal Workflow & AI Frameworks</h2>
-                <p>Constructing high-efficiency generative node models utilizing localized environments. Designing custom automation pipelines to instantly generate, filter, and upscale high-fidelity background components while maintaining exact control over latent space weights.</p>
-                <div class="tech-stack">> PLATFORMS: COMFYUI / KOHYA_SS / OPENWEBUI / LLM-FACTORY</div>
+            <div class="shared-card">
+                <div class="service-content">
+                    <h2>Nodal Workflow & AI Frameworks</h2>
+                    <p>Constructing high-efficiency generative node models utilizing localized environments. Designing custom automation pipelines to instantly generate, filter, and upscale high-fidelity background components while maintaining exact control over latent space weights.</p>
+                    <div class="tech-stack">> PLATFORMS: COMFYUI / KOHYA_SS / OPENWEBUI / LLM-FACTORY</div>
+                </div>
             </div>
 
-            <!-- Service 4 -->
-            <div class="service-card">
-                <h2>Ansible Automation & Docker Infrastructure</h2>
-                <p>Orchestrating version-controlled bare-metal compute pools using automated playbooks for seamless configuration management. Containerizing highly specialized environments and local LLM micro-servers distributed across scaled Linux hardware.</p>
-                <div class="tech-stack">> DEVOPS: ANSIBLE / DOCKER / PROXMOX / N8N / OLLAMA</div>
+            <div class="shared-card">
+                <div class="service-content">
+                    <h2>Ansible Automation & Docker Infrastructure</h2>
+                    <p>Orchestrating version-controlled bare-metal compute pools using automated playbooks for seamless configuration management. Containerizing highly specialized environments and local LLM micro-servers distributed across scaled Linux hardware.</p>
+                    <div class="tech-stack">> DEVOPS: ANSIBLE / DOCKER / PROXMOX / N8N / OLLAMA</div>
+                </div>
             </div>
-
         </div>
     </div>
 
-    <script>var submitted = false;</script>
     <script src="./src/contact_modal.js" defer></script>
     <script src="./src/l4g0tt0.js?v=4" defer></script>
 </body>

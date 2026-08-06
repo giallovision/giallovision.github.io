@@ -8,161 +8,26 @@
     <link rel="shortcut icon" href="favicon.png?v=2">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/global.css">
-    
     <style>
-        body { 
-            background-color: #090e13; /* Matched to Services page */
-            color: #ffffff;
-            margin: 0; 
-            padding: 0; 
-            font-family: 'Roboto', sans-serif; 
-            overflow-x: hidden;
-        }
+        /* Component-Specific Styles */
+        .profile-media { width: 100%; height: 250px; background-color: #04080c; overflow: hidden; border-bottom: 1px solid var(--border-soft); display: flex; flex-direction: row; }
+        .profile-media img, .profile-media video { flex: 1; width: 100%; height: 100%; object-fit: cover; filter: grayscale(20%); transition: flex 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), filter 0.4s ease; }
+        .profile-media img:first-child { border-right: 1px solid var(--border-soft); }
+        .profile-media:hover img { filter: grayscale(80%); }
+        .profile-media img:hover { flex: 1.5; filter: grayscale(0%); }
+        .profile-media img:nth-child(2) { object-position: 50% 30%; }
 
-        /* Container to push content below the fixed nav */
-        .about-container { 
-            padding: 100px 5% 80px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+        .profile-info { padding: 30px 20px; }
+        .profile-role { color: var(--accent-teal); font-family: monospace; font-size: 1.1rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; display: block; }
+        .profile-name { font-size: 1.8rem; font-weight: 900; margin: 0 0 15px 0; color: var(--accent-gold); text-transform: uppercase; letter-spacing: -0.5px; }
+        .profile-bio { font-size: 1.4rem; line-height: 1.6; color: #cccccc; margin: 0; }
 
-        /* Mirrored from the Services Header */
-        .page-title { 
-            font-size: clamp(2rem, 5vw, 3rem); 
-            font-weight: 900;
-            color: #ffb703; 
-            margin-bottom: 40px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border-bottom: 2px solid #00b4d8;
-            padding-bottom: 15px;
-            display: inline-block;
-        }
-
-        /* ====================================================
-           MOBILE FIRST DEFAULTS (Single Column Stack)
-           ==================================================== */
-        .team-grid { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 40px; 
-            width: 100%;
-        }
-
-        .profile-card { 
-            background: rgba(15, 22, 30, 0.8);
-            border: 1px solid rgba(0, 180, 216, 0.2); 
-            border-radius: 8px; 
-            overflow: hidden; 
-            display: flex; 
-            flex-direction: column; 
-            width: 100%;
-            box-sizing: border-box;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-        }
-
-        .profile-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 180, 216, 0.15);
-            border-color: #00b4d8;
-        }
-
-        .profile-media { 
-            width: 100%; 
-            height: 250px; /* Scaled down for mobile */
-            background-color: #04080c; 
-            overflow: hidden; 
-            border-bottom: 1px solid rgba(0, 180, 216, 0.2); 
-        }
-        
-        .profile-media img, .profile-media video { 
-            width: 100%; height: 100%; object-fit: cover; filter: grayscale(20%); 
-        }
-
-        /* DUAL IMAGE COLLAGE */
-        .profile-media.collage { 
-            display: flex; 
-            flex-direction: row; 
-            width: 100%; 
-            height: 250px; 
-            overflow: hidden; 
-        }
-        
-        .profile-media.collage img { 
-            flex: 1; height: 100%; object-fit: cover; filter: grayscale(20%); 
-            transition: flex 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), filter 0.4s ease; 
-        }
-        
-        .profile-media.collage img:first-child { 
-            border-right: 1px solid rgba(0, 180, 216, 0.2); 
-        }
-
-        /* Interactive Hover Expansion */
-        .profile-media.collage:hover img { filter: grayscale(80%); }
-        .profile-media.collage img:hover { flex: 1.5; filter: grayscale(0%); }
-        .profile-media.collage img:nth-child(2) { object-position: 50% 30%; }
-
-        .profile-info { 
-            padding: 30px 20px; 
-        }
-        
-        /* Mobile Typography Setup */
-        .profile-role { 
-            color: #00b4d8; 
-            font-family: monospace; 
-            font-size: 1.1rem; 
-            font-weight: 700;
-            letter-spacing: 2px; 
-            text-transform: uppercase; 
-            margin-bottom: 10px; 
-            display: block; 
-        }
-        
-        .profile-name { 
-            font-size: 1.8rem; 
-            font-weight: 900; 
-            margin: 0 0 15px 0; 
-            color: #ffb703; 
-            text-transform: uppercase; 
-            letter-spacing: -0.5px; 
-        }
-        
-        .profile-bio { 
-            font-size: 1.4rem; 
-            line-height: 1.6; 
-            color: #cccccc; 
-            margin: 0; 
-        }
-
-        /* ====================================================
-           DESKTOP OVERRIDE (Only triggers on screens > 900px)
-           ==================================================== */
         @media screen and (min-width: 900px) {
-            .team-grid { 
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 50px; 
-            }
-            .profile-media {
-                height: 400px;
-            }
-            .profile-media.collage {
-                height: 400px;
-            }
-            .profile-info { 
-                padding: 40px; 
-            }
-            .profile-role {
-                font-size: 0.9rem;
-            }
-            .profile-name {
-                font-size: clamp(1.8rem, 3vw, 2.2rem);
-                margin: 0 0 20px 0;
-            }
-            .profile-bio {
-                font-size: clamp(1.05rem, 2vw, 1.1rem);
-                line-height: 1.7;
-            }
+            .profile-media { height: 400px; }
+            .profile-info { padding: 40px; }
+            .profile-role { font-size: 0.9rem; }
+            .profile-name { font-size: clamp(1.8rem, 3vw, 2.2rem); margin: 0 0 20px 0; }
+            .profile-bio { font-size: clamp(1.05rem, 2vw, 1.1rem); line-height: 1.7; }
         }
     </style>
 </head>
@@ -179,13 +44,12 @@
         </div>
     </nav>
 
-    <div class="about-container">
-        <!-- Added header text to match the Services page layout -->
-        <h1 class="page-title">About</h1>
+    <div class="page-wrapper">
+        <h1 class="page-header">About</h1>
         
-        <div class="team-grid">
-            <div class="profile-card">
-                <div class="profile-media collage">
+        <div class="shared-grid">
+            <div class="shared-card">
+                <div class="profile-media">
                     <img src="./images/joey_comms.png" alt="Joey - Operations">
                     <img src="./images/joey_rocknroll.png" alt="Joey - Live Execution">
                 </div>
@@ -196,9 +60,10 @@
                 </div>
             </div>
 
-            <div class="profile-card">
+            <div class="shared-card">
                 <div class="profile-media">
-                    <video autoplay muted playsinline loop poster="./images/L4g0tt0_poster.png">
+                    <!-- FIX: Removed the loop attribute so it stops naturally -->
+                    <video autoplay muted playsinline poster="./images/L4g0tt0_poster.png">
                         <source src="./videos/L4g0tt0_reel.mp4" type="video/mp4">
                         <img src="./images/L4g0tt0_poster.png" alt="L4G0TT0 - Offline">
                     </video>
@@ -212,7 +77,6 @@
         </div>
     </div>
 
-    <script>var submitted = false;</script>
     <script src="./src/l4g0tt0.js?v=4" defer></script>
     <script src="./src/contact_modal.js" defer></script>
 </body>

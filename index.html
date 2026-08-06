@@ -12,13 +12,13 @@
 </head>
 <body>
 
-    <canvas id="glcanvas"></canvas>
+    <!-- WebGL Background Canvas (Must be first element in body) -->
+    <canvas id="glcanvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -999; pointer-events: none;"></canvas>
 
     <nav class="top-nav">
         <div class="nav-logo">GIALLOVISION // <span>CORE</span></div>
         <div class="nav-links">
-            <a href="/" class="nav-item">Work</a>
-            <!-- <a href="/design" class="nav-item">Design</a> -->
+            <a href="/" class="nav-item active">Work</a>
             <a href="/services" class="nav-item">Services</a>
             <a href="/nodes" class="nav-item">Nodes</a>
             <a href="/about" class="nav-item">About</a>
@@ -89,7 +89,8 @@
 
     <div id="scroll-proxy"></div>
 
-    <script type="module" src="./src/portfolio_app.js"></script>
+    <!-- Removed type="module" so the script executes synchronously and maps to the canvas instantly -->
+    <script src="./src/portfolio_app.js"></script>
     <script src="./src/contact_modal.js" defer></script>
     <script src="./src/l4g0tt0.js?v=4" defer></script>
 </body>

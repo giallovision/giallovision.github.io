@@ -10,10 +10,45 @@
     <link rel="stylesheet" href="./css/global.css">
     <style>
         /* Component-Specific Styles */
-        .service-content { padding: 30px 20px; display: flex; flex-direction: column; flex-grow: 1; text-align: center; }
-        .service-content h2 { color: var(--accent-teal); font-size: clamp(1.4rem, 4vw, 1.8rem); margin: 0 0 15px 0; font-weight: 700; }
-        .service-content p { font-size: clamp(1.1rem, 3vw, 1.4rem); line-height: 1.6; color: #cccccc; margin-bottom: 25px; flex-grow: 1; }
-        .tech-stack { font-family: monospace; font-size: clamp(0.85rem, 2vw, 1.1rem); font-weight: 700; color: var(--accent-gold); background: #04080c; padding: 15px 20px; border-radius: 4px; letter-spacing: 1px; text-transform: uppercase; }
+        .service-content { 
+            padding: 30px 20px; 
+            display: flex; 
+            flex-direction: column; 
+            flex-grow: 1; 
+            text-align: center; 
+        }
+        
+        .service-content h2 { 
+            color: var(--accent-teal) !important; /* Force Teal */
+            font-size: clamp(1.4rem, 4vw, 1.8rem); 
+            margin: 0 0 15px 0; 
+            font-weight: 700; 
+        }
+        
+        .service-content p { 
+            font-size: clamp(1.1rem, 3vw, 1.4rem); 
+            line-height: 1.6; 
+            color: #cccccc !important; /* Force Light Grey */
+            margin-bottom: 25px; 
+            flex-grow: 1; 
+        }
+        
+        /* The Terminal Block matches index.html */
+        .tech-stack { 
+            font-family: monospace; 
+            font-size: clamp(0.85rem, 2vw, 1.1rem); 
+            font-weight: 700; 
+            color: var(--accent-gold) !important; /* Force Neon/Gold */
+            
+            /* Anti-inversion terminal background */
+            background-color: #04080c !important; 
+            background-image: linear-gradient(#04080c, #04080c) !important; 
+            
+            padding: 15px 20px; 
+            border-radius: 4px; 
+            letter-spacing: 1px; 
+            text-transform: uppercase; 
+        }
         
         @media screen and (min-width: 900px) {
             .service-content { padding: 40px; }

@@ -27,9 +27,9 @@
         }
 
         .services-header {
-            font-size: clamp(2rem, 5vw, 3rem); /* Fluid scaling */
+            font-size: clamp(2rem, 5vw, 3rem); 
             font-weight: 900;
-            color: #ffb703;
+            color: #ffb703; /* CORRECTED GIALLOVISION GOLD */
             margin-bottom: 40px;
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -38,24 +38,27 @@
             display: inline-block;
         }
 
-        /* 2x2 Grid Layout for Desktop */
+        /* ====================================================
+           MOBILE FIRST DEFAULTS (Single Column Stack)
+           ==================================================== */
         .services-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
             width: 100%;
         }
 
-        /* Individual Service Cards */
         .service-card {
             background: rgba(15, 22, 30, 0.8);
             border: 1px solid rgba(0, 180, 216, 0.2);
             border-radius: 8px;
-            padding: 40px;
+            padding: 30px 20px; /* Mobile padding */
             display: flex;
             flex-direction: column;
             text-align: center;
             transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            box-sizing: border-box;
+            width: 100%;
         }
 
         .service-card:hover {
@@ -64,59 +67,57 @@
             border-color: #00b4d8;
         }
 
+        /* Mobile Typography Aligning with Global.css overrides */
         .service-card h2 {
             color: #00b4d8;
-            font-size: clamp(1.4rem, 3vw, 1.6rem); /* Fluid scaling */
+            font-size: 1.8rem;
             margin-top: 0;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             font-weight: 700;
         }
 
         .service-card p {
-            font-size: clamp(1rem, 2vw, 1.1rem); /* Fluid scaling */
-            line-height: 1.7;
+            font-size: 1.4rem;
+            line-height: 1.6;
             color: #cccccc;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             flex-grow: 1; 
         }
 
         .service-card .tech-stack {
             font-family: monospace;
-            font-size: clamp(0.75rem, 1.5vw, 0.85rem);
+            font-size: 1.1rem;
             font-weight: 700;
-            color: #ffb703;
+            color: #ffb703; /* CORRECTED GIALLOVISION GOLD */
             background: #04080c; 
-            padding: 15px 20px;
+            padding: 16px 20px;
             border-radius: 4px;
             letter-spacing: 1px;
             text-transform: uppercase;
         }
 
-        /* STRICT MOBILE OVERRIDE - Forces Single Column */
-        @media screen and (max-width: 900px) {
+        /* ====================================================
+           DESKTOP OVERRIDE (Only triggers on screens > 900px)
+           ==================================================== */
+        @media screen and (min-width: 900px) {
             .services-grid {
-                display: flex !important;
-                flex-direction: column !important;
-                gap: 25px !important;
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 40px;
             }
             .service-card {
-                padding: 30px 20px !important;
-                width: 100% !important;
-                box-sizing: border-box !important;
+                padding: 40px;
             }
-            /* Align with your massive mobile typography rules */
             .service-card h2 {
-                font-size: 1.8rem !important;
-                margin-bottom: 15px !important;
+                font-size: 1.6rem;
             }
             .service-card p {
-                font-size: 1.4rem !important;
-                line-height: 1.6 !important;
-                margin-bottom: 25px !important;
+                font-size: 1.1rem;
+                line-height: 1.7;
             }
             .service-card .tech-stack {
-                font-size: 1.1rem !important;
-                padding: 16px 20px !important;
+                font-size: 0.85rem;
+                padding: 15px 20px;
             }
         }
     </style>

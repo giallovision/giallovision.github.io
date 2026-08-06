@@ -21,16 +21,16 @@
 
         /* Container to push content below the fixed nav */
         .services-wrapper {
-            padding: 120px 5% 80px;
+            padding: 100px 5% 80px;
             max-width: 1400px;
             margin: 0 auto;
         }
 
         .services-header {
-            font-size: 3rem;
+            font-size: clamp(2rem, 5vw, 3rem); /* Fluid scaling */
             font-weight: 900;
-            color: #ffb703;
-            margin-bottom: 50px;
+            color: #d9ea2a;
+            margin-bottom: 40px;
             text-transform: uppercase;
             letter-spacing: 2px;
             border-bottom: 2px solid #00b4d8;
@@ -38,11 +38,12 @@
             display: inline-block;
         }
 
-        /* 2x2 Grid Layout */
+        /* 2x2 Grid Layout for Desktop */
         .services-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 40px;
+            width: 100%;
         }
 
         /* Individual Service Cards */
@@ -53,7 +54,7 @@
             padding: 40px;
             display: flex;
             flex-direction: column;
-            text-align: center; /* Centers all text to match index.html */
+            text-align: center;
             transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
         }
 
@@ -64,47 +65,58 @@
         }
 
         .service-card h2 {
-            color: #00b4d8; /* Keeps the teal header */
-            font-size: 1.6rem;
+            color: #00b4d8;
+            font-size: clamp(1.4rem, 3vw, 1.6rem); /* Fluid scaling */
             margin-top: 0;
             margin-bottom: 20px;
             font-weight: 700;
         }
 
         .service-card p {
-            font-size: 1.1rem;
+            font-size: clamp(1rem, 2vw, 1.1rem); /* Fluid scaling */
             line-height: 1.7;
             color: #cccccc;
             margin-bottom: 30px;
-            flex-grow: 1; /* Pushes the tech-stack div to the bottom of the card */
+            flex-grow: 1; 
         }
 
-        /* Matches the Black & Yellow Terminal Block exactly */
         .service-card .tech-stack {
             font-family: monospace;
-            font-size: 0.85rem;
+            font-size: clamp(0.75rem, 1.5vw, 0.85rem);
             font-weight: 700;
-            color: #ffb703;
-            background: #04080c; /* Deep black/navy background */
+            color: #d9ea2a;
+            background: #04080c; 
             padding: 15px 20px;
             border-radius: 4px;
-            border-left: none; /* Removes the previous teal border */
             letter-spacing: 1px;
             text-transform: uppercase;
         }
 
-        /* Mobile Breakpoint: Single Column */
-        @media (max-width: 900px) {
+        /* STRICT MOBILE OVERRIDE - Forces Single Column */
+        @media screen and (max-width: 900px) {
             .services-grid {
-                grid-template-columns: 1fr;
-                gap: 30px;
-            }
-            .services-header {
-                font-size: 2.2rem;
-                margin-bottom: 30px;
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 25px !important;
             }
             .service-card {
-                padding: 30px;
+                padding: 30px 20px !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            /* Align with your massive mobile typography rules */
+            .service-card h2 {
+                font-size: 1.8rem !important;
+                margin-bottom: 15px !important;
+            }
+            .service-card p {
+                font-size: 1.4rem !important;
+                line-height: 1.6 !important;
+                margin-bottom: 25px !important;
+            }
+            .service-card .tech-stack {
+                font-size: 1.1rem !important;
+                padding: 16px 20px !important;
             }
         }
     </style>

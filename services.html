@@ -3,24 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Giallovision | Services Node Array</title>
+    <title>Giallovision | Core Services</title>
     <link rel="icon" type="image/png" href="favicon.png?v=2">
     <link rel="shortcut icon" href="favicon.png?v=2">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://unpkg.com/litegraph.js/css/litegraph.css">
     <link rel="stylesheet" href="./css/global.css">
     
     <style>
-        body { background-color: #090e13; margin: 0; padding: 0; overflow: hidden; font-family: 'Roboto', sans-serif; }
-        #service-canvas { width: 100vw; height: 100vh; display: block; }
-
-        @media (max-width: 768px) {
-            #service-canvas { touch-action: none !important; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
-            /* Moved from bottom to top: 75px */
-            .mobile-zoom-controls { position: fixed; top: 75px; right: 20px; display: flex; flex-direction: column; gap: 15px; z-index: 101; }
-            .mobile-zoom-btn { background: rgba(9, 14, 19, 0.8); border: 1px solid #00b4d8; color: #00b4d8; width: 45px; height: 45px; border-radius: 50%; font-size: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(5px); box-shadow: 0 0 10px rgba(0, 180, 216, 0.2); }
+        body { 
+            background-color: #090e13; 
+            color: #ffffff;
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Roboto', sans-serif; 
+            overflow-x: hidden;
         }
-        @media (min-width: 769px) { .mobile-zoom-controls { display: none; } }
+
+        /* Container to push content below the fixed nav */
+        .services-wrapper {
+            padding: 120px 5% 80px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .services-header {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #ffb703;
+            margin-bottom: 50px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 2px solid #00b4d8;
+            padding-bottom: 15px;
+            display: inline-block;
+        }
+
+        /* 2x2 Grid Layout */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        /* Individual Service Cards */
+        .service-card {
+            background: rgba(15, 22, 30, 0.8);
+            border: 1px solid rgba(0, 180, 216, 0.2);
+            border-radius: 8px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            text-align: center; /* Centers all text to match index.html */
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 180, 216, 0.15);
+            border-color: #00b4d8;
+        }
+
+        .service-card h2 {
+            color: #00b4d8; /* Keeps the teal header */
+            font-size: 1.6rem;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .service-card p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #cccccc;
+            margin-bottom: 30px;
+            flex-grow: 1; /* Pushes the tech-stack div to the bottom of the card */
+        }
+
+        /* Matches the Black & Yellow Terminal Block exactly */
+        .service-card .tech-stack {
+            font-family: monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #ffb703;
+            background: #04080c; /* Deep black/navy background */
+            padding: 15px 20px;
+            border-radius: 4px;
+            border-left: none; /* Removes the previous teal border */
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* Mobile Breakpoint: Single Column */
+        @media (max-width: 900px) {
+            .services-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            .services-header {
+                font-size: 2.2rem;
+                margin-bottom: 30px;
+            }
+            .service-card {
+                padding: 30px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -29,24 +115,50 @@
         <div class="nav-logo">GIALLOVISION // <span>CORE</span></div>
         <div class="nav-links">
             <a href="/" class="nav-item">Work</a>
-            <!-- <a href="/design" class="nav-item">Design</a> -->
-            <a href="/services" class="nav-item">Services</a>
+            <a href="/services" class="nav-item active">Services</a>
             <a href="/nodes" class="nav-item">Nodes</a>
             <a href="/about" class="nav-item">About</a>
             <a href="#contact" class="back-btn" data-modal="contact">Contact</a>
         </div>
     </nav>
 
-    <div class="mobile-zoom-controls">
-        <button class="mobile-zoom-btn" onclick="window.zoomCanvas(1.25)">+</button>
-        <button class="mobile-zoom-btn" onclick="window.zoomCanvas(0.8)">-</button>
+    <div class="services-wrapper">
+        <h1 class="services-header">Core Services</h1>
+        
+        <div class="services-grid">
+            
+            <!-- Service 1 -->
+            <div class="service-card">
+                <h2>Live Media Operations & System Engineering</h2>
+                <p>Orchestrating hardware mapping arrays and software playback pipelines for high-stakes broadcast environments. Deploying real-time video canvas matrices integrated directly into professional engineering processors for rock-solid physical pixel alignment.</p>
+                <div class="tech-stack">> PLATFORMS: RESOLUME / TOUCHDESIGNER / COEX VMP / PIXELHUE</div>
+            </div>
+
+            <!-- Service 2 -->
+            <div class="service-card">
+                <h2>Design & Technical Drafting</h2>
+                <p>Translating spatial geometry into physical execution. Developing comprehensive stage rigging blueprints, power flows, and data schematics. Establishing 3D environmental pre-visualizations and engineering embedded controller automation sketches.</p>
+                <div class="tech-stack">> STACK: VECTORWORKS / DEPENCE / C++ / PYTHON / LUA</div>
+            </div>
+
+            <!-- Service 3 -->
+            <div class="service-card">
+                <h2>Nodal Workflow & AI Frameworks</h2>
+                <p>Constructing high-efficiency generative node models utilizing localized environments. Designing custom automation pipelines to instantly generate, filter, and upscale high-fidelity background components while maintaining exact control over latent space weights.</p>
+                <div class="tech-stack">> PLATFORMS: COMFYUI / KOHYA_SS / OPENWEBUI / LLM-FACTORY</div>
+            </div>
+
+            <!-- Service 4 -->
+            <div class="service-card">
+                <h2>Ansible Automation & Docker Infrastructure</h2>
+                <p>Orchestrating version-controlled bare-metal compute pools using automated playbooks for seamless configuration management. Containerizing highly specialized environments and local LLM micro-servers distributed across scaled Linux hardware.</p>
+                <div class="tech-stack">> DEVOPS: ANSIBLE / DOCKER / PROXMOX / N8N / OLLAMA</div>
+            </div>
+
+        </div>
     </div>
-    
-    <canvas id="service-canvas"></canvas>
 
     <script>var submitted = false;</script>
-    <script src="https://unpkg.com/litegraph.js/build/litegraph.js"></script>
-    <script type="module" src="./src/services_main.js"></script>
     <script src="./src/contact_modal.js" defer></script>
     <script src="./src/l4g0tt0.js?v=4" defer></script>
 </body>

@@ -209,16 +209,33 @@ const loader = new GLTFLoader();
 loader.load('./assets/giallovision_stage.glb', (gltf) => {
     stageModel = gltf.scene;
     
+    // 1. ADD TO SCENE FIRST
+    scene.add(stageModel);
+    
+    // 2. FORCE THREE.JS TO CALCULATE ALL WORLD MATRICES IN THE HIERARCHY
+    stageModel.updateMatrixWorld(true);
+    
+    // 3. NOW TRAVERSE AND COLLECT ACCURATE WORLD POSITIONS
     stageModel.traverse((child) => {
         if (child.isMesh) {
             const matName = child.material.name || "";
             
-            if (matName.startsWith('Mat_Proxy_')) {
-                child.updateMatrixWorld(true);
-                if (matName === 'Mat_Proxy_Beam') fixtureData.beams.push(child.matrixWorld.clone());
+            // Flexibly catch any proxy material (case-insensitive)
+            if (matName.toLowerCase().includes('proxy')) {
+                if (matName.toLowerCase().includes('beam')) {
+                    // Extract true world position and orientation
+                    const position = new THREE.Vector3();
+                    const quaternion = new THREE.Quaternion();
+                    const scale = new THREE.Vector3();
+                    
+                    child.matrixWorld.decompose(position, quaternion, scale);
+                    fixtureData.beams.push({ position, quaternion });
+                }
+                // Hide the proxy cube so it doesn't render in the scene
                 child.visible = false;
             } 
             else {
+                // Outlines & regular stage materials
                 const edges = new THREE.EdgesGeometry(child.geometry, 40);
                 const lineMat = new THREE.LineBasicMaterial({ color: 0x111111 });
                 const line = new THREE.LineSegments(edges, lineMat);
@@ -232,7 +249,6 @@ loader.load('./assets/giallovision_stage.glb', (gltf) => {
                     child.userData.matBlue = new THREE.MeshBasicMaterial({ color: 0x010203 }); 
                     child.userData.matWhite = new THREE.MeshBasicMaterial({ color: 0xdddddd, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
                 } else {
-                    // STAGE MATERIAL FIX: Brighter, smoother metal so it isn't pitch black
                     child.userData.matFull = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.3, metalness: 0.6 }); 
                     child.userData.matBlue = new THREE.MeshStandardMaterial({ color: 0x031525, roughness: 0.7 }); 
                     child.userData.matWhite = new THREE.MeshBasicMaterial({ color: 0xffffff, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }); 
@@ -243,7 +259,7 @@ loader.load('./assets/giallovision_stage.glb', (gltf) => {
         }
     });
 
-    scene.add(stageModel);
+    // 4. BUILD VOLUMETRICS WITH ACCURATE SCENE MATRICES
     buildVolumetrics();
     applyPhase(0);
 });
@@ -256,14 +272,24 @@ let beamInstances = null;
 function buildVolumetrics() {
     if (fixtureData.beams.length === 0) return;
 
+    // Create the cone. Height is 40. 
     const coneGeo = new THREE.ConeGeometry(1.5, 40, 16);
+    
+    // Shift the geometry so the pivot point is at the TOP (the lens of the light)
+    // By default, Three.js places the origin in the exact center of the geometry.
+    // If height is 40, shifting Y down by 20 puts the origin at the flat base of the cone.
     coneGeo.translate(0, -20, 0); 
+    
+    // Sometimes Blender proxies point along Z instead of Y.
+    // If your beams shoot out completely sideways after this fix, uncomment this line:
+    // coneGeo.rotateX(Math.PI / 2); 
     
     const volMat = new THREE.ShaderMaterial({
         uniforms: { u_color: { value: new THREE.Color(0x00b4d8) } },
         vertexShader: `
             varying float vGradient;
             void main() {
+                // Gradient fades out towards the bottom of the cone
                 vGradient = (position.y + 40.0) / 40.0;
                 gl_Position = projectionMatrix * modelViewMatrix * instanceMatrix * vec4(position, 1.0);
             }
@@ -271,7 +297,9 @@ function buildVolumetrics() {
         fragmentShader: `
             uniform vec3 u_color;
             varying float vGradient;
-            void main() { gl_FragColor = vec4(u_color, vGradient * 0.25); }
+            void main() { 
+                gl_FragColor = vec4(u_color, vGradient * 0.25); 
+            }
         `,
         transparent: true,
         blending: THREE.AdditiveBlending,
@@ -281,8 +309,21 @@ function buildVolumetrics() {
 
     beamInstances = new THREE.InstancedMesh(coneGeo, volMat, fixtureData.beams.length);
     
+    // Use a dummy object to calculate the correct matrix for each instance
+    const dummy = new THREE.Object3D();
+    
     for (let i = 0; i < fixtureData.beams.length; i++) {
-        beamInstances.setMatrixAt(i, fixtureData.beams[i]);
+        const fixture = fixtureData.beams[i];
+        
+        // Apply the proxy's exact position and rotation to the dummy
+        dummy.position.copy(fixture.position);
+        dummy.quaternion.copy(fixture.quaternion);
+        
+        // Update the dummy's matrix
+        dummy.updateMatrix();
+        
+        // Set the instanced mesh matrix at this index
+        beamInstances.setMatrixAt(i, dummy.matrix);
     }
     
     beamInstances.instanceMatrix.needsUpdate = true;

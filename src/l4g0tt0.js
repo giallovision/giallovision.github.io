@@ -5,6 +5,24 @@
 
 document.addEventListener("DOMContentLoaded", () => {
     
+    // --- NAV AUTO-HIGHLIGHTER ---
+    const currentPath = window.location.pathname.replace(/\/$/, ""); // Strip trailing slashes
+    
+    document.querySelectorAll('.nav-links .nav-item').forEach(link => {
+        const linkPath = link.getAttribute('href').replace(/\/$/, "");
+        
+        // Matches clean URLs (/design), file extensions (/design.html), or root homepage (/)
+        const isMatch = (linkPath === currentPath) ||
+                        (linkPath === "" && (currentPath === "" || currentPath === "/index.html")) ||
+                        (linkPath !== "" && currentPath.endsWith(linkPath + ".html"));
+
+        if (isMatch) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+
     const WORKER_URL = "https://gvis-l4g0.joseph-giallombardo.workers.dev/";
 
     // 1. INJECT THE CSS STYLES

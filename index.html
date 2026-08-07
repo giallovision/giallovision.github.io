@@ -13,7 +13,8 @@
 <body>
 
     <!-- WebGL Background Canvas (Must be first element in body) -->
-    <canvas id="glcanvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -999; pointer-events: none;"></canvas>
+    <!-- WebGL Background Canvas (z-index: 0 brings it in front of the body background) -->
+    <canvas id="glcanvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none;"></canvas>
 
     <nav class="top-nav">
         <div class="nav-logo">GIALLOVISION // <span>CORE</span></div>

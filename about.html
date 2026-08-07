@@ -18,16 +18,16 @@
         .profile-media img:nth-child(2) { object-position: 50% 30%; }
 
         .profile-info { padding: 30px 20px; }
-        .profile-role { color: var(--accent-teal); font-family: monospace; font-size: 1.1rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; display: block; }
-        .profile-name { font-size: 1.8rem; font-weight: 900; margin: 0 0 15px 0; color: var(--accent-gold); text-transform: uppercase; letter-spacing: -0.5px; }
-        .profile-bio { font-size: 1.4rem; line-height: 1.6; color: #cccccc; margin: 0; }
+        
+        /* Unified Typography - Matches services.html perfectly */
+        .profile-role { color: var(--accent-teal); font-family: monospace; font-size: clamp(0.85rem, 2vw, 1.1rem); font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; display: block; }
+        .profile-name { font-size: clamp(1.4rem, 4vw, 1.8rem); font-weight: 900; margin: 0 0 15px 0; color: var(--accent-gold); text-transform: uppercase; letter-spacing: -0.5px; }
+        .profile-bio { font-size: clamp(1.1rem, 3vw, 1.4rem); line-height: 1.6; color: #cccccc; margin: 0; }
 
         @media screen and (min-width: 900px) {
             .profile-media { height: 400px; }
             .profile-info { padding: 40px; }
-            .profile-role { font-size: 0.9rem; }
-            .profile-name { font-size: clamp(1.8rem, 3vw, 2.2rem); margin: 0 0 20px 0; }
-            .profile-bio { font-size: clamp(1.05rem, 2vw, 1.1rem); line-height: 1.7; }
+            /* Font size overrides removed - clamp() handles scaling automatically now */
         }
     </style>
 </head>

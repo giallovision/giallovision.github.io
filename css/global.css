@@ -98,10 +98,11 @@ img, video { max-width: 100%; height: auto; }
     display: inline-block;
 }
 
-/* MOBILE FIRST: Single column stack by default */
+/* FLUID GRID: Forces single-column on mobile automatically */
 .shared-grid {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    /* This tells the browser: "Make columns at least 350px wide. If you can't fit two, stack them." */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
     gap: 30px;
     width: 100%;
 }
@@ -136,11 +137,4 @@ img, video { max-width: 100%; height: auto; }
     .nav-links { gap: 30px; padding-right: 20px; }
     .nav-links a.nav-item { font-size: 0.85rem; letter-spacing: 2px; }
     .back-btn { font-size: 0.8rem; padding: 8px 16px; }
-
-    /* Upgrade Grids to Side-by-Side */
-    .shared-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 40px;
-    }
 }
